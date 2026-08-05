@@ -1,0 +1,34 @@
+# Variables de entorno - Ambiente de pruebas
+# Archivo de referencia. No almacenar secretos reales en repositorio.
+
+ENVIRONMENT=TEST
+SPRING_PROFILES_ACTIVE=test
+
+# Aplicacion
+APP_NAME=dmc_arquitectura_db_app
+SERVER_PORT=8080
+LOG_LEVEL=DEBUG
+
+# Base de datos prueba
+DB_HOST=localhost
+DB_PORT=1521
+DB_NAME=TESTDB
+DB_USERNAME=test_user
+DB_PASSWORD=change_me
+DB_SCHEMA=TEST_SCHEMA
+
+# Servicios externos prueba
+API_BASE_URL=http://localhost:8081/api
+API_TIMEOUT_MS=30000
+
+# Seguridad prueba
+JWT_SECRET=change_me_test_secret
+JWT_EXPIRATION_MS=3600000
+
+# Redis prueba
+REDIS_HOST=localhost
+REDIS_PORT=6379
+
+# Mensajeria prueba
+MESSAGE_BROKER_HOST=localhost
+MESSAGE_BROKER_PORT=9092
