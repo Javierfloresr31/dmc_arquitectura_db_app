@@ -22,4 +22,6 @@ Fuente funcional: entrevista de descubrimiento del caso de uso 2 — Seguros Hor
 La especificación se deriva del archivo de entrevistas adjunto `02_seguros_siniestro_facil(1).md`. fileciteturn0file0
 
 ## Prototipo
-Figma: **Siniestro Fácil - Prototipo Validaciones**. El prototipo es preliminar y representa únicamente comportamientos soportados por las entrevistas; no constituye una definición visual definitiva.
+**Siniestro Fácil - Prototipo Validaciones:** https://www.figma.com/design/0Rei4fxORWRHcGBuK3IA3n
+
+El prototipo es preliminar y representa únicamente comportamientos soportados por las entrevistas; no constituye una definición visual definitiva.
