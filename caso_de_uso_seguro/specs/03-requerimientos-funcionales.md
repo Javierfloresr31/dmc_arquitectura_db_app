@@ -1,0 +1,23 @@
+# 3. Requerimientos funcionales
+
+- RF-001 Crear expediente de siniestro con información mínima definida por Operaciones.
+- RF-002 Identificar reportante y distinguir asegurado de reportante autorizado.
+- RF-003 Validar póliza, vehículo, cobertura y deducible.
+- RF-004 Clasificar el caso respecto del alcance inicial y derivar fuera de alcance a ruta especializada.
+- RF-005 Mostrar estados principales: Reportado, Validando cobertura, Asistencia coordinada, Evidencia pendiente, En evaluación, Inspección programada, Presupuesto recibido, Autorizado, Observado, Rechazado, En reparación, Listo para entrega, Indemnizado y Cerrado.
+- RF-006 Mantener subestados internos separados de estados visibles al cliente.
+- RF-007 Registrar evidencias con vínculo al siniestro, momento de captura y metadatos disponibles; conservar original y versiones derivadas.
+- RF-008 Calcular/consultar señales de riesgo determinísticas y provenientes de modelos, sin convertir alerta en fraude automáticamente.
+- RF-009 Registrar alertas con tipo, severidad, explicación, datos origen, fecha y versión de regla/modelo.
+- RF-010 Permitir revisión humana: confirmar, descartar o pedir información, con justificación.
+- RF-011 Asignar y reasignar casos según criterios operativos mencionados y registrar razón.
+- RF-012 Coordinar proveedores con estados de solicitud aceptada, rechazada o sin respuesta; registrar intentos.
+- RF-013 Gestionar inspecciones.
+- RF-014 Recibir presupuestos, diagnósticos, observaciones, repuestos alternativos y ampliaciones.
+- RF-015 Registrar aprobación de presupuesto/cambio, vigencia del presupuesto y aprobador.
+- RF-016 Mantener línea de tiempo auditable.
+- RF-017 Registrar comunicaciones al cliente.
+- RF-018 Controlar riesgo de pagos duplicados.
+- RF-019 Aplicar acceso restringido por rol y necesidad; registrar descargas y consultas sensibles.
+- RF-020 Soportar integraciones lentas/indisponibles mediante procesamiento tolerante a fallos y reintentos/reasignación.
+- RF-021 Habilitar capacidades de IA indicadas: clasificación de fotografías, detección de documentos faltantes, resumen de declaraciones, priorización, comparación visual, reutilización de imágenes, extracción y agrupación de relaciones.
