@@ -1,33 +1,40 @@
 # NovaRetail — Stock Único
 
-## Especificación inicial SDD
+## Especificación SDD
 
-Esta carpeta contiene la especificación inicial derivada exclusivamente de las entrevistas del caso de uso **Retail — Stock Único**.
+La documentación se organiza en **12 bloques** para mantener una sola fuente de verdad y evitar mezclar necesidad, solución y evidencia.
 
-### Documentos
+| # | Bloque | Archivo |
+|---|---|---|
+| 01 | Identidad | [01-contexto-alcance.md](./01-contexto-alcance.md) |
+| 02 | Contexto | [02-historias-usuario.md](./02-historias-usuario.md) |
+| 03 | Objetivos | [03-requerimientos.md](./03-requerimientos.md) |
+| 04 | Alcance | [04-arquitectura-preliminar.md](./04-arquitectura-preliminar.md) |
+| 05 | Actores | [05-preguntas-abiertas.md](./05-preguntas-abiertas.md) |
+| 06 | Procesos | [06-trazabilidad-validaciones.md](./06-trazabilidad-validaciones.md) |
+| 07 | Historias | [07-historias.md](./07-historias.md) |
+| 08 | RF | [08-requerimientos-funcionales.md](./08-requerimientos-funcionales.md) |
+| 09 | RNF | [09-requerimientos-no-funcionales.md](./09-requerimientos-no-funcionales.md) |
+| 10 | Reglas | [10-reglas.md](./10-reglas.md) |
+| 11 | Criterios | [11-criterios-aceptacion.md](./11-criterios-aceptacion.md) |
+| 12 | Preguntas | [12-preguntas.md](./12-preguntas.md) |
 
-1. `01-contexto-alcance.md` — contexto, objetivos, alcance inicial, actores, conceptos y evidencias.
-2. `02-historias-usuario.md` — historias de usuario, criterios de aceptación y trazabilidad a entrevistas.
-3. `03-requerimientos.md` — requerimientos funcionales, reglas evidenciadas y requisitos no funcionales.
-4. `04-arquitectura-preliminar.md` — arquitectura lógica preliminar y decisiones que deben validarse antes de implementar.
-5. `05-preguntas-abiertas.md` — brechas, preguntas de negocio y decisiones pendientes.
-6. `06-trazabilidad-validaciones.md` — matriz de trazabilidad y validaciones de consistencia de la especificación.
+> Nota: los seis archivos históricos iniciales se conservaron y ahora contienen los bloques 01–06. Los nombres se mantienen por compatibilidad con el trabajo anterior.
 
-## Principio de elaboración
+## Artefactos de evolución
 
-- No se incorporan datos de negocio no presentes en las entrevistas.
-- Cuando una decisión no está definida, se documenta como pregunta abierta o hipótesis de trabajo explícita.
-- Las historias de usuario representan necesidades derivadas de las entrevistas; no constituyen todavía una solución técnica definitiva.
-- Las cifras de 78 tiendas, 2 centros de distribución, aproximadamente 65.000 SKU y picos de 12.000 pedidos/hora se tratan como datos declarados en la entrevista y deberán confirmarse en discovery técnico.
+- [13-plan-desarrollo.md](./13-plan-desarrollo.md) — plan vivo actualizado por sesión.
+- [14-modelos-datos.md](./14-modelos-datos.md) — hoja de ruta del modelo conceptual, lógico y físico.
+- [15-data-sintetica.md](./15-data-sintetica.md) — estrategia de generación de data sintética.
+
+## Fuente funcional
+
+La especificación parte del documento de entrevistas de NovaRetail — Stock Único. Las entrevistas son material de discovery y no una solución ya diseñada. fileciteturn14file1
 
 ## Prototipo Figma
 
-Prototipo preliminar: **NovaRetail - Stock Único - Prototipo**.
+[Stock Único — Prototipo preliminar](https://www.figma.com/design/BqdCwX0gc8QyPAC6ezFExZ)
 
-Incluye tres vistas conceptuales:
+## Criterio de calidad
 
-- Dashboard operativo.
-- Consulta de disponibilidad y reserva.
-- Cola de preparación y gestión de faltantes.
-
-El prototipo es exploratorio y no debe interpretarse como definición cerrada de UI, reglas o arquitectura.
+No se deben inventar atributos, cardinalidades, tecnologías, tiempos, algoritmos, proveedores o reglas. Cuando una decisión no está soportada, se registra como pregunta abierta y se incorpora al plan de desarrollo.
