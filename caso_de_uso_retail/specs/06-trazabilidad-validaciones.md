@@ -1,75 +1,71 @@
-# 6. Trazabilidad y validaciones
+# 06. Procesos
 
-## 6.1 Matriz de trazabilidad
+## P1. Consultar disponibilidad
 
-| Elemento | Evidencia principal | Resultado |
-|---|---|---|
-| Disponibilidad confiable | CEO 2-3,6,9; SC 3; EC 1,3,9 | Cubierto por HU-01 / RF-01,02,23 |
-| Reserva temporal | SC 4-5; EC 2; CEO 7 | Cubierto por HU-02 / RF-03-06 |
-| Pago-pedido-reserva | EC 8 | Cubierto por HU-03 / RF-07 |
-| Asignación/promesa | CEO 6; SC 7; EC 3,5 | Cubierto por HU-04 / RF-08,09,14,15 |
-| Preparación | EC 4,7 | Cubierto por HU-05 / RF-11-13 |
-| Excepciones | EC 5; SC 6,7 | Cubierto por HU-06 / RF-14-16 |
-| Retiro | EC 6 | Cubierto por HU-07 / RF-17,18 |
-| Auditoría | SC 6,10 | Cubierto por HU-08 / RF-19,20 |
-| Degradación | CEO 9,10; EC 9 | Cubierto por HU-09 / RF-23 |
-| IA | CEO 8 | Cubierto por HU-10 / RF-26 |
+1. Canal solicita SKU, cantidad, ubicación/modalidad.
+2. Stock Único obtiene la vista operativa.
+3. Evalúa disponibilidad según reglas aún pendientes.
+4. Informa ubicación candidata y frescura del dato cuando corresponda.
 
-## 6.2 Validación de cobertura
+## P2. Reservar inventario
 
-- Cada actor identificado en las entrevistas aparece asociado a una capacidad o se marca como pendiente de permisos detallados.
-- Los objetos de negocio mencionados se reflejan en el contexto y en los requerimientos.
-- Los eventos explícitamente mencionados se incorporan como entradas de inventario/pedido/auditoría.
-- Las modalidades de despacho a domicilio y retiro en tienda están contempladas.
-- La preparación desde tienda está contemplada.
-- Concurrencia e idempotencia están reflejadas como requisitos y criterios de aceptación.
-- Auditoría de cambios de inventario está reflejada.
-- Operación degradada está reflejada.
-- IA está limitada a recomendación según la evidencia disponible.
+1. Checkout inicia pago/confirmación según regla que debe definirse.
+2. Se solicita reserva.
+3. Se aplica control de concurrencia.
+4. Se garantiza idempotencia.
+5. Se registra expiración y estado.
+6. Se confirma, libera, vence o traslada según reglas aprobadas.
 
-## 6.3 Validación de no invención
+## P3. Coordinar pago y pedido
 
-No se han fijado en esta especificación:
+1. Se correlaciona intento de pago.
+2. Se correlaciona reserva.
+3. Se registra/crea pedido.
+4. Se procesa el resultado del pago.
+5. Se ejecutan compensaciones cuando corresponda.
 
-- tiempos de reserva;
-- fórmula numérica de disponibilidad;
-- pesos de asignación;
-- algoritmo de promesa;
-- SLO/SLA numéricos;
-- RTO/RPO;
-- tecnología de persistencia, mensajería o caché;
-- proveedores o nombres de sistemas actuales;
-- permisos concretos por rol;
-- tiendas concretas del piloto;
-- SKU concretos del piloto;
-- reglas de compensación entre pago, pedido y reserva.
+La semántica exacta ante fallos distribuidos permanece abierta.
 
-Todos ellos se mantienen como preguntas abiertas.
+## P4. Asignar ubicación y promesa
 
-## 6.4 Validación de consistencia interna
+La selección puede considerar disponibilidad, distancia, capacidad, horario, costo, prioridad de tienda, fecha prometida y restricciones del producto. Las ponderaciones no están definidas. fileciteturn14file4
 
-### Consistencia de stock
+## P5. Preparar pedido
 
-La documentación diferencia stock físico, stock utilizable/disponibilidad y reservas. Esto es consistente con la declaración de negocio de que una unidad físicamente presente no necesariamente es apta para venta digital.
+1. Se genera tarea.
+2. Tienda acepta.
+3. Preparador recoge.
+4. Valida SKU y cantidad.
+5. Embala.
+6. Marca listo para despacho o retiro.
 
-### Consistencia de reserva
+## P6. Gestionar faltante
 
-La documentación exige expiración, idempotencia y control de concurrencia. No se define una duración ni un mecanismo técnico concreto.
+1. Preparador registra excepción.
+2. Se busca otra ubicación.
+3. Se recalcula promesa.
+4. Se ofrecen alternativas de negocio cuando estén autorizadas.
 
-### Consistencia eventual vs fuerte
+## P7. Retiro en tienda
 
-La documentación separa consulta y reserva: la primera puede tolerar eventualidad; la segunda requiere mayor consistencia. La tecnología que materializará esta diferencia no se define.
+1. Cliente selecciona tienda.
+2. Se establece promesa.
+3. Tienda prepara.
+4. Se genera código de recojo cuando está listo.
+5. Se valida retirante.
+6. Se registra entrega.
+7. Si no recoge, se aplica la regla de liberación pendiente.
 
-### Integración gradual
+## P8. Registrar inventario y auditoría
 
-La documentación evita una sustitución total y mantiene integración con sistemas actuales, en línea con la restricción de CEO.
+Los movimientos pueden provenir de POS, pedidos web, recepciones, transferencias, devoluciones, anulaciones, conteos, ajustes, daños, robos y cambios de estado. Algunos llegan en tiempo real y otros por lote. fileciteturn14file2
 
-### IA
+Cada cambio debe conservar evento de origen, documento, usuario/sistema, momento, cantidad anterior, cantidad nueva y razón.
 
-La documentación no convierte recomendaciones predictivas en transacciones, en línea con la restricción de CEO.
+## P9. Operación degradada
 
-## 6.5 Criterio de entrada a diseño técnico
+Cuando una integración se retrasa, la solución debe distinguir frescura del dato y aplicar un comportamiento controlado sin mostrar disponibilidad engañosa. Las operaciones permitidas en degradación son una decisión pendiente.
 
-No debe considerarse cerrada la especificación para implementación hasta resolver al menos las preguntas 1-24 y 33-46 de `05-preguntas-abiertas.md`, porque afectan directamente disponibilidad, reserva, pedido, asignación, eventos y escalabilidad.
+## P10. Analítica e IA
 
-Las preguntas 47-60 pueden resolverse por fases, pero deben estar asignadas a responsables antes de producción.
+Se contemplan indicadores y recomendaciones para anticipar demanda, redistribuir inventario y detectar anomalías. La IA no es autoridad transaccional.
