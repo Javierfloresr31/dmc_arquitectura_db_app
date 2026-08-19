@@ -7,7 +7,35 @@ El modelo lógico de `14-modelo-logico.md` es la fuente estructural. PostgreSQL 
 
 ## Validación del modelo lógico
 
-El modelo lógico contiene 23 estructuras lógicas. Se materializan las 23 como tablas físicas.
+El DDL físico actual materializa **25 estructuras como 25 tablas físicas**. La documentación anterior indicaba 23 estructuras; esa cifra era inconsistente con el DDL realmente definido. La validación contra la instancia Cloud SQL `dmcappasistidoia`, base `dmcsiniestrofacil`, confirmó **25 tablas** en el esquema `siniestro_facil`, alineadas con el DDL de este documento.
+
+Las 25 tablas físicas son:
+
+1. `asegurado`
+2. `reportante`
+3. `poliza`
+4. `vehiculo`
+5. `poliza_vehiculo`
+6. `cobertura`
+7. `siniestro`
+8. `siniestro_participante`
+9. `evidencia`
+10. `evidencia_version`
+11. `proveedor_asistencia`
+12. `asistencia`
+13. `inspeccion`
+14. `taller`
+15. `presupuesto`
+16. `presupuesto_detalle`
+17. `autorizacion`
+18. `regla_modelo_version`
+19. `alerta_antifraude`
+20. `alerta_senal`
+21. `revision_antifraude`
+22. `pago`
+23. `siniestro_estado_historial`
+24. `auditoria`
+25. `siniestro_relacion`
 
 Se aplican únicamente restricciones trazables al modelo lógico o a relaciones estructurales explícitas:
 
@@ -229,6 +257,24 @@ create index ix_auditoria_entidad on siniestro_facil.auditoria(entidad, entidad_
 create index ix_siniestro_relacion_relacionado on siniestro_facil.siniestro_relacion(siniestro_relacionado_id);
 ```
 
+## Validación de despliegue en Cloud SQL
+
+La validación realizada en `dmcappasistidoia`, base `dmcsiniestrofacil`, confirmó que el esquema `siniestro_facil` contiene las 25 tablas definidas por este modelo físico.
+
+Consulta utilizada:
+
+```sql
+SELECT
+    tablename
+FROM pg_tables
+WHERE schemaname = 'siniestro_facil'
+ORDER BY tablename;
+```
+
+Resultado validado: **25 tablas**.
+
+La validación de permisos desde Cloud Shell también fue satisfactoria: la cuenta de despliegue tiene `roles/owner`, Cloud SQL Admin API quedó habilitada, la instancia está `RUNNABLE`, PostgreSQL es versión 18 y la base `dmcsiniestrofacil` existe. La prueba transaccional confirmó capacidad para `CREATE SCHEMA`, `CREATE TABLE`, PK, FK e índices y realizó `ROLLBACK` correctamente.
+
 ## Hallazgos de validación
 
 1. **ASEGURADO, REPORTANTE y COBERTURA** están en el modelo lógico, pero sus atributos y relaciones persistentes no están definidos suficientemente. Se materializan sin inventar columnas ni FK.
@@ -236,5 +282,6 @@ create index ix_siniestro_relacion_relacionado on siniestro_facil.siniestro_rela
 3. `POLIZA_VEHICULO` se conserva como tabla asociativa porque el modelo lógico la define como posible relación N:M/histórica; no se agrega una regla de unicidad adicional.
 4. La relación `SINIESTRO_RELACION` tiene PK compuesta y evita la auto-relación mediante `CHECK`.
 5. No se convierten preguntas abiertas en `UNIQUE`, catálogos, triggers ni reglas de negocio.
+6. La cifra anterior de 23 tablas se considera corregida: el modelo físico vigente contiene **25 tablas**, y la instancia Cloud SQL validada contiene esas mismas 25 tablas.
 
 Las preguntas pendientes relevantes del dominio incluyen claves de negocio, roles, estados, tipos de evidencia, estructura económica, almacenamiento de objetos y autorización.
