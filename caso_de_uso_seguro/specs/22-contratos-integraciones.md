@@ -2,7 +2,7 @@
 
 ## 1. Integraciones identificadas
 
-Las entrevistas identifican como dependencias: sistema de pólizas, red de talleres, proveedores de grúa/asistencia, ajustadores, mapas, mensajería y medios de pago. No todas las dependencias disponen de APIs modernas, por lo que el backend debe tolerar lentitud e indisponibilidad. fileciteturn51file3
+Las entrevistas identifican como dependencias: sistema de pólizas, red de talleres, proveedores de grúa/asistencia, ajustadores, mapas, mensajería y medios de pago. No todas las dependencias disponen de APIs modernas, por lo que el backend debe tolerar lentitud e indisponibilidad.
 
 ## 2. Patrón común
 
@@ -15,7 +15,8 @@ Cada integración deberá aislarse detrás de un puerto/adaptador y manejar:
 - idempotencia;
 - error técnico;
 - fecha/hora del intento;
-- proveedor destino.
+- proveedor destino;
+- métricas de latencia, error y costo cuando estén disponibles.
 
 ## 3. Sistema de pólizas
 
@@ -29,6 +30,8 @@ Flujos:
 
 **Pendiente:** contrato real, autenticación, endpoints/canales, SLA y códigos de respuesta.
 
+**Recomendación:** priorizar API síncrona para validaciones de corta duración; si existe indisponibilidad, aplicar timeout controlado y degradación sin bloquear permanentemente el expediente.
+
 ## 4. Asistencia / grúa
 
 **Propósito:** coordinar asistencia cuando corresponde.
@@ -41,7 +44,9 @@ Estados técnicos mínimos:
 - COMPLETADA;
 - FALLIDA.
 
-Operaciones exige reintento, escalamiento o reasignación cuando el proveedor no responde y distinguir aceptación, rechazo y ausencia de respuesta. fileciteturn51file13
+Operaciones exige reintento, escalamiento o reasignación cuando el proveedor no responde y distinguir aceptación, rechazo y ausencia de respuesta.
+
+**Recomendación:** integración asíncrona cuando la respuesta no pueda garantizarse rápidamente; mantener historial de intentos y no bloquear el expediente por un único proveedor.
 
 **Pendiente:** proveedor/canal concreto y SLA.
 
@@ -49,7 +54,9 @@ Operaciones exige reintento, escalamiento o reasignación cuando el proveedor no
 
 **Propósito:** recibir orden, presupuesto, diagnóstico, observaciones, repuestos alternativos y ampliaciones.
 
-El modelo físico soporta `TALLER`, `PRESUPUESTO` y `PRESUPUESTO_DETALLE`; no se inventan campos económicos adicionales. fileciteturn51file12
+El modelo físico soporta `TALLER`, `PRESUPUESTO` y `PRESUPUESTO_DETALLE`; no se inventan campos económicos adicionales.
+
+**Recomendación:** API REST si el taller la soporta; de lo contrario, utilizar un adaptador controlado para el canal disponible sin acoplar el dominio al proveedor.
 
 **Pendiente:** mecanismo de comunicación y contrato del taller.
 
@@ -57,11 +64,15 @@ El modelo físico soporta `TALLER`, `PRESUPUESTO` y `PRESUPUESTO_DETALLE`; no se
 
 **Propósito identificado:** ubicación aproximada y soporte de asistencia/operación.
 
+**Recomendación de selección:** cobertura geográfica, precisión requerida, costo por transacción, límites/cuotas, SLA, privacidad y facilidad de integración. No se selecciona proveedor hasta disponer del requerimiento concreto y comparar alternativas.
+
 **Pendiente:** proveedor, API, precisión requerida y política de almacenamiento.
 
 ## 7. Mensajería
 
 **Propósito:** informar al cliente el siguiente paso y cambios relevantes.
+
+**Recomendación:** arquitectura asíncrona, plantillas versionadas, trazabilidad de entrega y reintentos con backoff. No bloquear una transacción de negocio crítica esperando confirmación de entrega del mensaje.
 
 **Pendiente:** canales, plantillas, proveedor, consentimiento y política de reintentos.
 
@@ -69,12 +80,15 @@ El modelo físico soporta `TALLER`, `PRESUPUESTO` y `PRESUPUESTO_DETALLE`; no se
 
 **Propósito:** ejecutar/registrar pago o indemnización después de autorización.
 
-Requisitos derivados:
+Requisitos:
 - operación idempotente;
 - correlación;
 - no duplicidad;
 - resultado auditable;
-- manejo de timeout/indisponibilidad.
+- manejo de timeout/indisponibilidad;
+- reconciliación ante respuesta desconocida.
+
+**Regla:** nunca repetir ciegamente una operación financiera si el resultado del proveedor es desconocido. Primero consultar/reconciliar el estado o utilizar el mecanismo idempotente oficial del proveedor.
 
 **Pendiente:** proveedor, contrato y confirmación transaccional.
 
@@ -84,13 +98,36 @@ Cuando una dependencia no pueda responder síncronamente sin bloquear al cliente
 
 ## 10. Reintentos
 
-No se aplicará retry ciego. Debe clasificarse el error como transitorio, permanente o desconocido. Operaciones exige distinguir intento, aceptación, rechazo y ausencia de respuesta. fileciteturn51file13
+No se aplicará retry ciego. Debe clasificarse el error como transitorio, permanente o desconocido. Operaciones exige distinguir intento, aceptación, rechazo y ausencia de respuesta.
+
+Recomendación técnica:
+- exponential backoff;
+- jitter;
+- límite de intentos;
+- dead-letter/error handling cuando corresponda;
+- métricas de retry;
+- circuit breaker para dependencias inestables.
 
 ## 11. Circuit breaker / degradación
 
-La arquitectura deberá aislar fallas externas para que la indisponibilidad de un proveedor no bloquee todo el expediente. La política concreta de circuit breaker y fallback queda como decisión técnica pendiente.
+La arquitectura deberá aislar fallas externas para que la indisponibilidad de un proveedor no bloquee todo el expediente.
 
-## 12. Preguntas bloqueantes
+La degradación debe preservar el expediente y registrar el estado de dependencia para permitir recuperación posterior.
+
+## 12. FinOps de integraciones
+
+Cada integración externa deberá medir, cuando sea posible:
+- número de llamadas;
+- costo por llamada;
+- tasa de error;
+- latencia;
+- reintentos;
+- volumen de datos;
+- costo por siniestro.
+
+Esto permitirá comparar costo y valor antes de incrementar frecuencia de llamadas o adoptar proveedores más costosos.
+
+## 13. Preguntas abiertas
 
 Antes de implementar cada adaptador se requiere resolver:
 1. contrato del sistema de pólizas;
@@ -98,6 +135,8 @@ Antes de implementar cada adaptador se requiere resolver:
 3. canal/contrato de talleres;
 4. proveedor de mensajería;
 5. proveedor de pagos;
-6. proveedor de mapas.
+6. proveedor de mapas;
+7. SLA por integración y tipo de operación;
+8. requisitos de consentimiento/privacidad por canal.
 
 No se inventan URLs, credenciales, payloads ni SLAs.
