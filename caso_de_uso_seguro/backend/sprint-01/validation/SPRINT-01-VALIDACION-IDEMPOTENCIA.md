@@ -23,8 +23,6 @@ La solución:
 6. vincula la fila de idempotencia al siniestro dentro de la misma transacción del caso de uso;
 7. conserva el registro de idempotencia si el alta termina correctamente y lo revierte si la transacción falla.
 
-PostgreSQL documenta que `ON CONFLICT` permite resolver de forma atómica el conflicto sobre una restricción única, y que una inserción concurrente sobre una clave única puede bloquear hasta que finalice la transacción competidora. citeturn2search0turn2search3
-
 ## Migración
 
 La migración se encuentra en:
