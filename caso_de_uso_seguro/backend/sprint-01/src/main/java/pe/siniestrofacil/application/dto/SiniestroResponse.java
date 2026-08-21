@@ -1,0 +1,3 @@
+package pe.siniestrofacil.application.dto;
+import pe.siniestrofacil.domain.model.Siniestro; import java.time.OffsetDateTime;
+public record SiniestroResponse(Long siniestroId,String estado,OffsetDateTime fecha,String ubicacionAproximada,String tipoEvento,String danosAparentes,String correlationId){public static SiniestroResponse from(Siniestro s,String c){return new SiniestroResponse(s.id(),s.estado(),s.fecha(),s.ubicacionAproximada(),s.tipoEvento(),s.danosAparentes(),c);}}
