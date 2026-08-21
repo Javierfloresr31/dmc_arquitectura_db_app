@@ -41,8 +41,6 @@ El backend no confiará en un `userId` enviado por el cliente para determinar la
 - PROVEEDOR_ASISTENCIA
 - SUPERVISOR
 
-Estos roles representan el baseline funcional. La asignación definitiva de permisos por endpoint se cerrará antes de publicar cada API.
-
 ## 4. Matriz inicial
 
 | Capacidad | Asegurado | Reportante | Operador | Ajustador | Fraude | Taller | Proveedor | Supervisor |
@@ -68,26 +66,40 @@ Los permisos marcados como `según delegación`, `según necesidad` o `autorizad
 - Acciones sensibles generan auditoría.
 - La autorización de pago no debe depender únicamente de una recomendación de IA.
 
-## 6. Datos personales
+## 6. Claims Firebase
 
-Las entrevistas identifican riesgo de exposición de datos personales y exigen controles.
+Firebase Custom Claims se utilizarán únicamente para control de acceso, principalmente roles/perfiles mínimos. No se utilizarán para almacenar datos de perfil extensos, información de negocio ni atributos que deban cambiar frecuentemente.
 
-La implementación deberá separar autorización funcional de filtrado de campos sensibles cuando corresponda.
+El backend debe tratar los claims como entrada de autorización y aplicar además reglas de pertenencia/alcance del recurso. Tener un rol válido no implica acceso irrestricto a cualquier siniestro.
 
-## 7. Claims y autorización
+## 7. Step-up authentication
 
-Firebase Authentication proporciona la identidad y los claims disponibles para autorización. El backend Cloud Run será responsable de aplicar las reglas funcionales y de impedir acceso a recursos fuera del alcance del actor.
+**Recomendación:** evaluar step-up authentication para operaciones de alto impacto, especialmente autorización de pagos, cambios críticos y acciones sensibles sobre evidencia. La activación concreta queda pendiente de riesgo y política de seguridad.
 
-No se define todavía quién administra los claims ni el catálogo definitivo de permisos, porque esa decisión no está soportada por las fuentes disponibles.
+## 8. Datos sensibles
 
-## 8. Auditoría
+Como baseline de seguridad se consideran sensibles:
+- datos personales;
+- documentos de identidad;
+- evidencia original;
+- información y decisiones antifraude;
+- información asociada a pagos;
+- auditoría de operaciones sensibles.
 
-Como mínimo deberán trazarse las operaciones sensibles sobre evidencia, antifraude, autorización, pago y cambios relevantes del expediente, conforme al modelo de auditoría aprobado.
+La clasificación definitiva debe validarse con seguridad/legal.
 
-## 9. Decisiones pendientes no bloqueantes del baseline
+## 9. Auditoría
 
-1. Responsable operativo de asignación de roles/claims.
+Como mínimo deberán trazarse las operaciones sensibles sobre evidencia, antifraude, autorización, pago y cambios relevantes del expediente.
+
+## 10. Administración de roles
+
+Recomendación: administración centralizada de roles mediante una función administrativa controlada, con mínimo privilegio y trazabilidad. No se recomienda permitir que un usuario final modifique sus propios claims.
+
+## 11. Decisiones pendientes
+
+1. Responsable operativo de administración de roles/claims.
 2. Permisos exactos por endpoint.
-3. Campos considerados sensibles por cada recurso.
+3. Campos sensibles definitivos.
 4. Operaciones que requieren step-up authentication.
 5. Política de revocación/desactivación de cuentas.
