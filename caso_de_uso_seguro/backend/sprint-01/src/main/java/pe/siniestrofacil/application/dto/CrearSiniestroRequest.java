@@ -1,0 +1,3 @@
+package pe.siniestrofacil.application.dto;
+import jakarta.validation.Valid; import jakarta.validation.constraints.NotBlank; import jakarta.validation.constraints.NotNull; import java.time.OffsetDateTime;
+public record CrearSiniestroRequest(@Valid @NotNull PolizaRequest poliza,@Valid @NotNull VehiculoRequest vehiculo,@NotNull OffsetDateTime fecha,@NotBlank String ubicacionAproximada,@NotBlank String tipoEvento,String danosAparentes,@Valid ParticipanteRequest reportante){public record PolizaRequest(@NotBlank String numero){} public record VehiculoRequest(@NotBlank String placa){} public record ParticipanteRequest(String personaTercero,String medioContacto,String rol){}}
