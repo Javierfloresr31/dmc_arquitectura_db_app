@@ -56,8 +56,8 @@ Ports / Interfaces
    v          v             v
 Persistence Integrations  Storage
    |          |             |
-   v          +-- Pólizas  +-- Evidencias
-Cloud SQL    +-- Asistencia
+   v          +-- Pólizas  +-- Evidencias originales
+Cloud SQL    +-- Asistencia +-- Evidencias derivadas
 PostgreSQL   +-- Talleres
              +-- Mapas
              +-- Mensajería
@@ -79,7 +79,9 @@ Ejecuta el backend stateless. Valida la identidad recibida, aplica autorización
 Persistencia transaccional del modelo físico aprobado en `siniestro_facil`.
 
 ### Cloud Storage
-Almacenamiento de objetos/evidencias cuando el caso de uso requiera persistencia de archivos. La referencia al objeto y su trazabilidad deben mantenerse en el dominio/persistencia aprobados.
+Almacenamiento de documentos y evidencias binarias. Los originales deben preservarse y no ser reemplazados silenciosamente. La Specification establece una retención inicial de 10 años desde el cierre del siniestro.
+
+La implementación recomendada es un bucket dedicado a evidencias originales con protección de retención por objeto, calculando `retain-until = fecha_cierre + 10 años`. Las evidencias derivadas pueden mantenerse separadas cuando tengan política de acceso/retención diferente. La decisión de bloqueo irreversible debe validarse con negocio/legal antes de producción.
 
 ### Secret Manager
 Credenciales y secretos de integración. No se deben almacenar secretos en código, repositorio, imagen de contenedor ni configuración versionada.
@@ -118,13 +120,17 @@ PostgreSQL utiliza el esquema `siniestro_facil`. El modelo físico existente es 
 
 ## 8. Seguridad
 
-Firebase Authentication resuelve autenticación. La autorización funcional permanece en el backend mediante roles/claims y reglas de acceso. La matriz definitiva de permisos debe quedar cerrada antes del endpoint productivo.
+Firebase Authentication resuelve autenticación. La autorización funcional permanece en el backend mediante roles/claims y reglas de acceso. Custom Claims se limitarán a información necesaria para control de acceso; no almacenarán perfiles ni datos de negocio extensos.
 
-## 9. Observabilidad
+## 9. FinOps
+
+El uso de GCP seguirá principios FinOps: visibilidad de costos, ownership, presupuestos/alertas, medición de costo por unidad de negocio cuando sea posible y optimización continua. Cloud Storage deberá utilizar lifecycle para optimizar clases cuando el patrón de acceso real lo permita, sin violar retención.
+
+## 10. Observabilidad
 
 Toda operación relevante debe permitir correlacionar request, usuario/actor técnico, siniestro, evento, integración externa, resultado y error mediante identificadores de correlación definidos por la especificación de idempotencia.
 
-## 10. Manejo de errores
+## 11. Manejo de errores
 
 Clasificación mínima:
 - error de validación;
@@ -136,15 +142,17 @@ Clasificación mínima:
 - error persistente;
 - error interno.
 
-## 11. Decisiones pendientes
+## 12. Decisiones pendientes
 
-Quedan como decisiones de refinamiento, no como sustitución del baseline:
+Quedan como decisiones de refinamiento:
 - proveedor concreto de mapas;
 - mecanismo de mensajería/eventos;
 - contratos reales de terceros;
-- permisos definitivos por rol;
-- política definitiva de almacenamiento/retención de objetos.
+- permisos definitivos por endpoint;
+- responsable de administración de roles Firebase;
+- campos sensibles definitivos y operaciones que requieren step-up;
+- política final de clases/lifecycle de Cloud Storage basada en medición del piloto.
 
-## 12. Criterio de salida
+## 13. Criterio de salida
 
 La arquitectura queda lista para implementación cuando cada HU del sprint tenga identificado su caso de uso, API, servicio de aplicación, componente de dominio, persistencia, integración requerida y controles de seguridad.
