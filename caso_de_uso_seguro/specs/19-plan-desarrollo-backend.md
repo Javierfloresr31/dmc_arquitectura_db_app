@@ -2,7 +2,7 @@
 
 ## 1. Objetivo
 
-Establecer el plan incremental de desarrollo del backend mediante SDD, manteniendo trazabilidad entre especificaciones, reglas de negocio, modelo de datos, APIs, integraciones, seguridad, pruebas y entregables de cada sprint.
+Establecer el plan incremental de desarrollo del backend mediante SDD, manteniendo trazabilidad entre especificaciones, reglas de negocio, modelo de datos, APIs, integraciones, pruebas y entregables de cada sprint.
 
 ## 2. Regla de ejecución por sprint
 
@@ -30,9 +30,23 @@ El desarrollo parte de:
 - modelo físico PostgreSQL;
 - validación de constraints;
 - data sintética validada visualmente en Cloud SQL;
-- arquitectura GCP con Firebase Authentication, API Gateway, Cloud Run y Cloud SQL;
+- arquitectura GCP con API Gateway, Cloud Run y Cloud SQL;
 - Cloud Storage para documentos/evidencias;
 - decisiones GCP/FinOps registradas en `27-decisiones-gcp-finops.md`.
+
+### 3.1 Alcance de autenticación del MVP
+
+Por decisión explícita del proyecto, **el MVP omite temporalmente la autenticación con Firebase** para concentrar el desarrollo en la funcionalidad de negocio.
+
+Esto no elimina la seguridad como requisito de arquitectura futura. Firebase Authentication, RBAC y claims permanecen documentados como capacidad posterior y no forman parte de los criterios de cierre funcional del MVP.
+
+Durante el MVP:
+- los endpoints funcionales se podrán ejecutar sin Firebase ID Token;
+- no se implementarán Custom Claims;
+- no se bloquearán los casos de uso por autenticación Firebase;
+- la lógica de negocio no debe quedar acoplada a Firebase;
+- se mantendrán `correlationId`, auditoría funcional e idempotencia cuando correspondan;
+- el diseño debe permitir incorporar Firebase posteriormente sin reescribir los casos de uso.
 
 ## 4. Sprint 0 — Contrato técnico y preparación
 
@@ -43,7 +57,7 @@ Entregables:
 - contratos API;
 - contratos de integraciones;
 - máquina de estados;
-- Firebase/RBAC;
+- seguridad/RBAC como diseño futuro;
 - idempotencia;
 - estrategia de pruebas;
 - FinOps y retención;
@@ -54,7 +68,7 @@ Entregables:
 
 ## 5. Sprint 1 — Registro y consulta del siniestro
 
-**Objetivo:** entregar el primer flujo funcional ejecutable.
+**Objetivo:** entregar el primer flujo funcional ejecutable del MVP.
 
 Alcance:
 - registro de siniestro;
@@ -63,10 +77,10 @@ Alcance:
 - participantes/reportante;
 - estado inicial `REPORTADO`;
 - transición controlada;
-- Firebase Authentication;
-- RBAC inicial;
 - auditoría;
 - idempotencia de creación.
+
+**Fuera del Sprint 1 MVP:** Firebase Authentication, Firebase ID Token, Custom Claims y validación de RBAC en runtime.
 
 APIs objetivo:
 - `POST /api/v1/siniestros`;
@@ -86,7 +100,6 @@ Persistencia objetivo:
 - `auditoria`.
 
 Validaciones mínimas:
-- autenticación/autorización;
 - validación de request;
 - PK/FK/NOT NULL aplicables;
 - transacción/rollback;
@@ -116,14 +129,6 @@ Persistencia:
 - `evidencia`;
 - `evidencia_version`.
 
-Validaciones:
-- cobertura válida/no válida;
-- dependencia externa no disponible;
-- timeout/retry;
-- hash y metadatos;
-- permisos de descarga;
-- trazabilidad de original/derivado.
-
 ## 7. Sprint 3 — Evaluación, inspección y presupuesto
 
 **Objetivo:** implementar la evaluación del daño y gestión de talleres.
@@ -142,14 +147,6 @@ Persistencia:
 - `taller`;
 - `presupuesto`;
 - `presupuesto_detalle`.
-
-Validaciones:
-- relaciones con siniestro/taller;
-- detalle consistente;
-- transiciones;
-- permisos;
-- errores de proveedor;
-- pruebas de integración.
 
 ## 8. Sprint 4 — Antifraude y revisión humana
 
@@ -172,14 +169,6 @@ Persistencia:
 - `revision_antifraude`;
 - `siniestro_relacion`.
 
-Validaciones:
-- reproducibilidad;
-- versión de regla/modelo;
-- RBAC;
-- alerta no equivale a fraude;
-- revisión y justificación;
-- auditoría.
-
 ## 9. Sprint 5 — Autorización, reparación y pago
 
 **Objetivo:** completar la resolución económica del expediente.
@@ -196,14 +185,6 @@ Persistencia:
 - `autorizacion`;
 - `pago`;
 - historial/auditoría.
-
-Validaciones:
-- segregación de funciones;
-- autorización válida;
-- pago idempotente;
-- retry seguro;
-- fallo externo;
-- conciliación.
 
 ## 10. Sprint 6 — Integraciones, resiliencia y observabilidad
 
@@ -223,14 +204,6 @@ Alcance:
 - observabilidad;
 - métricas de consumo y costo.
 
-Validaciones:
-- indisponibilidad;
-- timeout;
-- retry;
-- recuperación;
-- duplicidad;
-- trazabilidad end-to-end.
-
 ## 11. Sprint 7 — End-to-End, seguridad y piloto
 
 **Objetivo:** validar el flujo completo y preparar el piloto.
@@ -247,15 +220,7 @@ Alcance:
 - documentación operativa;
 - preparación del piloto.
 
-Validaciones:
-- flujo feliz;
-- fraude;
-- proveedor caído;
-- pago reintentado;
-- RBAC;
-- carga;
-- observabilidad;
-- FinOps.
+En este sprint se incorporará la autenticación Firebase si se confirma su entrada en el alcance de salida del MVP/piloto.
 
 ## 12. Definition of Done por sprint
 
@@ -267,7 +232,7 @@ Un sprint solo se considera terminado cuando:
 - [ ] pruebas automatizadas relevantes pasan;
 - [ ] validaciones de integración pasan cuando aplican;
 - [ ] persistencia coincide con el modelo físico aprobado;
-- [ ] seguridad aplicable está probada;
+- [ ] controles de seguridad incluidos en el alcance están probados;
 - [ ] idempotencia está probada cuando corresponde;
 - [ ] scripts/migraciones necesarios están versionados;
 - [ ] documentación SDD está actualizada;
@@ -291,8 +256,6 @@ caso_de_uso_seguro/
 └── validation/
     └── scripts y resultados
 ```
-
-El código puede residir en una carpeta backend dedicada dentro del mismo repositorio. La ubicación final se fijará al crear el proyecto base, sin mezclar código de distintos sprints sin trazabilidad.
 
 ## 14. Registro obligatorio al cerrar cada sprint
 
@@ -323,6 +286,7 @@ Se mantienen como OPEN hasta que una fuente las resuelva:
 - contratos concretos de terceros;
 - SLA por región/tipo de siniestro;
 - permisos finales por rol;
+- fecha de incorporación de Firebase Authentication al MVP/piloto;
 - responsable operativo de claims Firebase;
 - campos sensibles definitivos;
 - operaciones que requieren step-up;
