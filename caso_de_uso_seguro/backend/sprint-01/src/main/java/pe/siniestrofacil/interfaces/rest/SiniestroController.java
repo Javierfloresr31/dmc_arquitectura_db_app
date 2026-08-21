@@ -1,7 +1,54 @@
 package pe.siniestrofacil.interfaces.rest;
-import jakarta.validation.Valid; import pe.siniestrofacil.application.dto.*; import pe.siniestrofacil.application.service.SiniestroService; import org.springframework.http.*; import org.springframework.web.bind.annotation.*; import java.net.URI; import java.util.*;
-@RestController @RequestMapping("/api/v1/siniestros") public class SiniestroController {private final SiniestroService service; public SiniestroController(SiniestroService service){this.service=service;}
-@PostMapping public ResponseEntity<SiniestroResponse> create(@Valid @RequestBody CrearSiniestroRequest r,@RequestHeader(value="X-Correlation-Id",required=false)String c,@RequestHeader(value="Idempotency-Key",required=false)String k){String cid=c==null||c.isBlank()?UUID.randomUUID().toString():c; SiniestroResponse x=SiniestroResponse.from(service.create(r),cid); return ResponseEntity.created(URI.create("/api/v1/siniestros/"+x.siniestroId())).body(x);}
-@GetMapping("/{id}") public ResponseEntity<SiniestroResponse> get(@PathVariable long id,@RequestHeader(value="X-Correlation-Id",required=false)String c){return service.findById(id).map(s->ResponseEntity.ok(SiniestroResponse.from(s,c))).orElseGet(()->ResponseEntity.notFound().build());}
-@GetMapping public List<SiniestroResponse> list(@RequestHeader(value="X-Correlation-Id",required=false)String c){return service.findAll().stream().map(s->SiniestroResponse.from(s,c)).toList();}
-@PostMapping("/{id}/transiciones") public ResponseEntity<Void> transition(@PathVariable long id,@RequestParam String estado){service.transition(id,estado);return ResponseEntity.ok().build();}}
+
+import jakarta.validation.Valid;
+import pe.siniestrofacil.application.dto.*;
+import pe.siniestrofacil.application.service.SiniestroService;
+import org.springframework.http.*;
+import org.springframework.web.bind.annotation.*;
+import java.net.URI;
+import java.util.*;
+
+@RestController
+@RequestMapping("/api/v1/siniestros")
+public class SiniestroController {
+    private final SiniestroService service;
+
+    public SiniestroController(SiniestroService service) {
+        this.service = service;
+    }
+
+    @PostMapping
+    public ResponseEntity<SiniestroResponse> create(
+            @Valid @RequestBody CrearSiniestroRequest r,
+            @RequestHeader(value = "X-Correlation-Id", required = false) String c,
+            @RequestHeader(value = "Idempotency-Key", required = false) String k) {
+        String cid = c == null || c.isBlank() ? UUID.randomUUID().toString() : c;
+        SiniestroResponse x = SiniestroResponse.from(service.create(r, k, cid), cid);
+        return ResponseEntity.created(URI.create("/api/v1/siniestros/" + x.siniestroId())).body(x);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<SiniestroResponse> get(
+            @PathVariable long id,
+            @RequestHeader(value = "X-Correlation-Id", required = false) String c) {
+        return service.findById(id)
+                .map(s -> ResponseEntity.ok(SiniestroResponse.from(s, c)))
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping
+    public List<SiniestroResponse> list(
+            @RequestHeader(value = "X-Correlation-Id", required = false) String c) {
+        return service.findAll().stream()
+                .map(s -> SiniestroResponse.from(s, c))
+                .toList();
+    }
+
+    @PostMapping("/{id}/transiciones")
+    public ResponseEntity<Void> transition(
+            @PathVariable long id,
+            @RequestParam String estado) {
+        service.transition(id, estado);
+        return ResponseEntity.ok().build();
+    }
+}
