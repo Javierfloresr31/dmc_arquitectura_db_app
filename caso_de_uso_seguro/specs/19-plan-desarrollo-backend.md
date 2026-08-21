@@ -13,9 +13,9 @@ El desarrollo parte de:
 - modelo conceptual y lógico;
 - modelo físico PostgreSQL;
 - validación de constraints;
-- data sintética validada visualmente en Cloud SQL.
-
-El modelo físico materializa 23 estructuras lógicas y evita inventar restricciones no sustentadas. `ASEGURADO`, `REPORTANTE` y `COBERTURA` permanecen mínimas; `INSPECCION.ajustador_id` no tiene FK mientras no exista una entidad AJUSTADOR en el modelo. 
+- data sintética validada visualmente en Cloud SQL;
+- arquitectura GCP con Firebase Authentication, API Gateway, Cloud Run y Cloud SQL;
+- decisiones GCP/FinOps registradas en `27-decisiones-gcp-finops.md`.
 
 ## 3. Sprint 0 — Contrato técnico
 
@@ -29,9 +29,10 @@ Entregables:
 - `24-seguridad-rbac.md`;
 - `25-idempotencia.md`;
 - `26-estrategia-pruebas-backend.md`;
+- `27-decisiones-gcp-finops.md`;
 - actualización de trazabilidad SDD.
 
-**Criterio de salida:** contratos, estados, seguridad, idempotencia y estrategia de pruebas suficientemente definidos para comenzar implementación; las preguntas abiertas que no bloqueen el primer flujo quedan registradas, no inventadas.
+**Criterio de salida:** contratos, estados, seguridad, idempotencia, almacenamiento de evidencia y estrategia de pruebas suficientemente definidos para comenzar implementación; las preguntas abiertas que no bloqueen el primer flujo quedan registradas, no inventadas.
 
 ## 4. Sprint 1 — Registro y consulta del siniestro
 
@@ -40,6 +41,8 @@ Entregables:
 - identificación de póliza y vehículo según especificación;
 - participantes/reportante según lo definido;
 - estado inicial y transición controlada;
+- autenticación Firebase;
+- autorización inicial RBAC;
 - auditoría.
 
 ## 5. Sprint 2 — Cobertura, asistencia y evidencia
@@ -48,7 +51,9 @@ Entregables:
 - coordinación de asistencia;
 - proveedores;
 - recepción y consulta de evidencia;
-- preservación del original y versiones derivadas;
+- almacenamiento de originales en Cloud Storage;
+- preservación y retención del original;
+- versiones derivadas;
 - trazabilidad de evidencia.
 
 ## 6. Sprint 3 — Evaluación, inspección y presupuesto
@@ -77,6 +82,7 @@ Entregables:
 - seguimiento de reparación;
 - pago/indemnización;
 - controles contra duplicidad;
+- reconciliación de pagos;
 - cierre.
 
 ## 9. Sprint 6 — Integraciones y resiliencia
@@ -88,7 +94,8 @@ Entregables:
 - mensajería;
 - medios de pago;
 - timeout, retry, fallback, correlación e idempotencia;
-- observabilidad.
+- observabilidad;
+- métricas de costo por integración.
 
 ## 10. Sprint 7 — End-to-End y piloto
 
@@ -97,6 +104,7 @@ Entregables:
 - seguridad;
 - resiliencia;
 - validación de CA;
+- revisión de costos GCP;
 - corrección de defectos;
 - preparación del piloto en ciudad y grupo controlado de talleres.
 
@@ -110,8 +118,10 @@ Una historia queda terminada cuando:
 5. errores y estados de negocio tratados;
 6. seguridad aplicable validada;
 7. idempotencia aplicada cuando corresponda;
-8. documentación actualizada;
-9. criterios de aceptación satisfechos.
+8. almacenamiento de evidencia aplicado cuando corresponda;
+9. documentación actualizada;
+10. criterios de aceptación satisfechos;
+11. impacto/costo GCP revisado cuando la historia introduce consumo significativo.
 
 ## 12. Control por sesión
 
@@ -122,15 +132,19 @@ Actualizar este documento en cada sesión con:
 - decisiones arquitectónicas;
 - preguntas abiertas y su impacto;
 - defectos y riesgos;
+- consumo/costo relevante de GCP;
 - próximos pasos.
 
-## 13. Preguntas que siguen abiertas
+## 13. Preguntas abiertas
 
-No bloquean por sí mismas el Sprint 0, pero deben resolverse antes de implementar las funcionalidades afectadas:
+Deben resolverse antes de implementar las funcionalidades afectadas:
 - política exacta de deduplicación;
 - umbrales y política de bloqueo antifraude;
-- conservación de imágenes y estrategia de objetos;
-- SLA por región/tipo de siniestro;
 - contratos concretos con talleres y otros terceros;
+- SLA por región/tipo de siniestro;
 - permisos finales por rol;
-- claves de negocio no definidas en el modelo físico.
+- responsable operativo de claims Firebase;
+- campos sensibles definitivos;
+- operaciones que requieren step-up;
+- proveedor de mapas/mensajería/pagos;
+- lifecycle exacto de Cloud Storage basado en medición del piloto.
