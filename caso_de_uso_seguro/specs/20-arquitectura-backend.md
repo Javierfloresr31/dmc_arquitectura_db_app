@@ -2,26 +2,44 @@
 
 ## 1. Propósito
 
-Definir el diseño lógico del backend que implementará las especificaciones de Siniestro Fácil sin introducir decisiones de negocio no sustentadas.
+Definir la arquitectura técnica del backend de Siniestro Fácil sobre Google Cloud, manteniendo el dominio, requisitos y modelo físico aprobados como fuentes de verdad.
 
-## 2. Principios
+## 2. Baseline tecnológico decidido
 
-- El dominio de siniestros es la fuente de las reglas de negocio.
-- La API no debe contener reglas de negocio dispersas.
-- Persistencia separada del dominio.
-- Integraciones externas aisladas mediante adaptadores.
-- Eventos y operaciones externas deben ser trazables.
-- Las decisiones antifraude son asistidas y revisables.
-- La evidencia original debe preservarse y las transformaciones quedar identificadas.
-- Los estados del siniestro solo cambian mediante transiciones válidas.
+| Capacidad | Plataforma |
+|---|---|
+| Identidad | Firebase Authentication |
+| API | Google Cloud API Gateway |
+| Backend | Google Cloud Run |
+| Persistencia | Cloud SQL for PostgreSQL |
+| Evidencias/objetos | Cloud Storage |
+| Secretos | Secret Manager |
+| Imágenes de contenedor | Artifact Registry |
+| CI/CD | Cloud Build |
+| Logs | Cloud Logging |
+| Métricas | Cloud Monitoring |
+| Desarrollo/despliegue | Cloud Shell + Google Cloud |
+
+Proyecto GCP de desarrollo: `brave-inn-368220`.
+
+Infraestructura de datos existente:
+`dmcappasistidoia` → PostgreSQL 18 → `dmcsiniestrofacil` → esquema `siniestro_facil`.
 
 ## 3. Arquitectura lógica
 
 ```text
-Canales / Clientes
+Canales / Frontend
         |
         v
-API / Controllers
+Firebase Authentication
+        |
+        | Firebase ID Token
+        v
+Google Cloud API Gateway
+        |
+        v
+Google Cloud Run
+  API / Controllers
         |
         v
 Application / Use Cases
@@ -34,33 +52,56 @@ Siniestro Evidencia Antifraude
         |
         v
 Ports / Interfaces
-   |          |
-   v          v
-Persistence  Integrations
-   |          |
-   v          +-- Pólizas
-PostgreSQL   +-- Asistencia / grúa
-             +-- Talleres
+   |          |             |
+   v          v             v
+Persistence Integrations  Storage
+   |          |             |
+   v          +-- Pólizas  +-- Evidencias
+Cloud SQL    +-- Asistencia
+PostgreSQL   +-- Talleres
              +-- Mapas
              +-- Mensajería
              +-- Pagos
 ```
 
-## 4. Capas
+## 4. Responsabilidades
+
+### Firebase Authentication
+Autentica al usuario y proporciona el Firebase ID Token. La identidad obtenida del token no será sustituida por un identificador enviado de confianza desde el cliente.
+
+### API Gateway
+Punto de entrada de las APIs públicas y aplicación de la configuración de API/OpenAPI definida para el backend.
+
+### Cloud Run
+Ejecuta el backend stateless. Valida la identidad recibida, aplica autorización funcional, ejecuta casos de uso y comunica con persistencia/integraciones mediante puertos.
+
+### Cloud SQL
+Persistencia transaccional del modelo físico aprobado en `siniestro_facil`.
+
+### Cloud Storage
+Almacenamiento de objetos/evidencias cuando el caso de uso requiera persistencia de archivos. La referencia al objeto y su trazabilidad deben mantenerse en el dominio/persistencia aprobados.
+
+### Secret Manager
+Credenciales y secretos de integración. No se deben almacenar secretos en código, repositorio, imagen de contenedor ni configuración versionada.
+
+### Cloud Build / Artifact Registry / Cloud Run
+Cadena de construcción y despliegue: GitHub → Cloud Build → imagen en Artifact Registry → Cloud Run.
+
+## 5. Capas de aplicación
 
 ### API
-Responsable de autenticación contextual, validación sintáctica, serialización, códigos HTTP y correlación.
+Validación sintáctica, serialización, códigos HTTP, correlación y extracción de identidad del contexto autenticado.
 
 ### Application
-Orquesta casos de uso, transacciones, autorización de operación y publicación de eventos.
+Orquesta casos de uso, transacciones, autorización y publicación de eventos cuando corresponda.
 
 ### Domain
-Contiene reglas de negocio, invariantes y transición de estados. No depende de PostgreSQL ni de proveedores externos.
+Reglas de negocio, invariantes y transiciones de estado. No depende de PostgreSQL ni de proveedores externos.
 
 ### Infrastructure
-Implementa repositorios PostgreSQL, clientes de integraciones, almacenamiento de evidencia y mecanismos de mensajería.
+Repositorios PostgreSQL, clientes de integraciones, acceso a Cloud Storage y mecanismos de mensajería definidos posteriormente.
 
-## 5. Agregados iniciales
+## 6. Agregados iniciales
 
 - Siniestro: expediente, estado, participantes y relaciones.
 - Evidencia: original, hash, metadatos y versiones.
@@ -71,22 +112,19 @@ Implementa repositorios PostgreSQL, clientes de integraciones, almacenamiento de
 
 La separación es arquitectónica; no implica crear nuevas tablas fuera del modelo físico aprobado.
 
-## 6. Persistencia
+## 7. Persistencia
 
-PostgreSQL utiliza el esquema `siniestro_facil`. El modelo físico define 23 estructuras y PK/FK estructurales; no se agregarán claves únicas, catálogos cerrados o triggers sin una decisión posterior sustentada. fileciteturn51file5
+PostgreSQL utiliza el esquema `siniestro_facil`. El modelo físico existente es la fuente de verdad para tablas, columnas, PK/FK y restricciones estructurales. No se agregarán claves únicas, catálogos cerrados o triggers sin una decisión sustentada.
 
-## 7. Observabilidad mínima
+## 8. Seguridad
 
-Toda operación relevante debe permitir correlacionar:
-- request;
-- usuario/actor técnico;
-- siniestro;
-- evento;
-- integración externa;
-- resultado;
-- error.
+Firebase Authentication resuelve autenticación. La autorización funcional permanece en el backend mediante roles/claims y reglas de acceso. La matriz definitiva de permisos debe quedar cerrada antes del endpoint productivo.
 
-## 8. Manejo de errores
+## 9. Observabilidad
+
+Toda operación relevante debe permitir correlacionar request, usuario/actor técnico, siniestro, evento, integración externa, resultado y error mediante identificadores de correlación definidos por la especificación de idempotencia.
+
+## 10. Manejo de errores
 
 Clasificación mínima:
 - error de validación;
@@ -98,10 +136,15 @@ Clasificación mínima:
 - error persistente;
 - error interno.
 
-## 9. Decisiones pendientes
+## 11. Decisiones pendientes
 
-No se inventa tecnología concreta para autenticación, mensajería, almacenamiento de objetos o proveedor de mapas. Deben definirse como ADR/decisión técnica antes de implementar la integración correspondiente.
+Quedan como decisiones de refinamiento, no como sustitución del baseline:
+- proveedor concreto de mapas;
+- mecanismo de mensajería/eventos;
+- contratos reales de terceros;
+- permisos definitivos por rol;
+- política definitiva de almacenamiento/retención de objetos.
 
-## 10. Criterio de salida
+## 12. Criterio de salida
 
-La arquitectura queda lista para implementación cuando cada HU del sprint tenga identificado su caso de uso, API, servicio de aplicación, componente de dominio, persistencia e integración requerida.
+La arquitectura queda lista para implementación cuando cada HU del sprint tenga identificado su caso de uso, API, servicio de aplicación, componente de dominio, persistencia, integración requerida y controles de seguridad.
