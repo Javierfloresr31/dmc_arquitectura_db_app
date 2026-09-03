@@ -14,7 +14,7 @@
 - RF-012 Coordinar proveedores con estados de solicitud aceptada, rechazada o sin respuesta; registrar intentos.
 - RF-013 Gestionar inspecciones.
 - RF-014 Recibir presupuestos, diagnósticos, observaciones, repuestos alternativos y ampliaciones.
-- RF-015 Registrar aprobación de presupuesto/cambio, vigencia del presupuesto y aprobador.
+- RF-015 Registrar la decisión de aprobación u observación de presupuesto/cambio, su vigencia cuando corresponda y el responsable de la decisión.
 - RF-016 Mantener línea de tiempo auditable.
 - RF-017 Registrar comunicaciones al cliente.
 - RF-018 Controlar riesgo de pagos duplicados.
