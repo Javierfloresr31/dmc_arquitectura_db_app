@@ -2,6 +2,7 @@ package pe.siniestrofacil.interfaces.rest;
 
 import pe.siniestrofacil.application.dto.ApiError;
 import pe.siniestrofacil.application.exception.IdempotencyConflictException;
+import pe.siniestrofacil.application.exception.EconomicOperationConflictException;
 import org.springframework.http.*;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,16 @@ public class RestExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(new ApiError(
                         "IDEMPOTENCY_CONFLICT",
+                        e.getMessage(),
+                        UUID.randomUUID().toString(),
+                        List.of()));
+    }
+
+    @ExceptionHandler(EconomicOperationConflictException.class)
+    ResponseEntity<ApiError> economicOperationConflict(EconomicOperationConflictException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ApiError(
+                        "ECONOMIC_OPERATION_CONFLICT",
                         e.getMessage(),
                         UUID.randomUUID().toString(),
                         List.of()));
