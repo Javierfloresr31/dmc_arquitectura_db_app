@@ -22,7 +22,7 @@ public class AutorizacionController {
         this.service = service;
     }
 
-    @PostMapping("/siniestros/{id}/autorizacion")
+    @PostMapping("/siniestros/{id}/autorizaciones")
     public ResponseEntity<AutorizacionResponse> autorizar(
             @PathVariable Long id,
             @Valid @RequestBody AutorizacionRequest request,
