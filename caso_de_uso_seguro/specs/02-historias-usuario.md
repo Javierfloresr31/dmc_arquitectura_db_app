@@ -42,6 +42,9 @@ Como taller, quiero presentar presupuesto, diagnóstico y solicitudes de aprobac
 **US-012 — Gestionar autorización**  
 Como operación, quiero aprobar u observar presupuestos y cambios dejando quién y cuándo realizó la acción.
 
+**US-019 — Gestionar pago/indemnización**  
+Como responsable de operaciones, quiero registrar un pago o indemnización asociado a un siniestro autorizado, para completar la resolución económica del expediente y mantener trazabilidad del resultado.
+
 ## Épica E6 — Fraude y revisión humana
 **US-013 — Generar alerta explicable**  
 Como sistema, quiero registrar tipo, severidad, explicación, datos origen, fecha y versión de regla/modelo de una alerta.

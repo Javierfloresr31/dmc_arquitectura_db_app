@@ -30,6 +30,15 @@ Dado que un proveedor no responde, entonces se registra el intento y el caso pue
 ## CA-010 Presupuesto
 Dado un presupuesto recibido, entonces se registra su vigencia, diagnóstico, aprobación/observación, cambios y responsable de la decisión.
 
+## CA-013 Pago/indemnización
+Dado un siniestro con autorización registrada, cuando se registra un pago/indemnización, entonces queda asociado al siniestro y a la autorización correspondiente.
+
+Dado un pago/indemnización registrado, entonces debe quedar trazabilidad suficiente para reconstruir la operación.
+
+Dado un siniestro sin autorización aplicable, entonces el pago no debe registrarse como operación válida.
+
+Dado que el pago se procesa nuevamente con la misma `Idempotency-Key`, entonces la operación no debe generar un segundo resultado económico.
+
 ## CA-011 Auditoría
 Dado un expediente, entonces la línea de tiempo permite reconstruir cambios, evidencias, cobertura, proveedores, presupuesto, comunicaciones y pagos.
 
