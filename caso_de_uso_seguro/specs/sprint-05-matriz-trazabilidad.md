@@ -22,7 +22,7 @@ La persistencia indicada es `autorizacion`, `pago` e historial/auditoría.
 | ID | Elemento | Fuente SDD | RF | CA | RN | API | Persistencia | Estado actual | Brecha / observación | Acción antes de código |
 |---|---|---|---|---|---|---|---|---|---|---|
 | S05-01 | Recibir presupuesto | US-011 | RF-014 | CA-010 | — | POST `/api/v1/siniestros/{id}/presupuestos` | `presupuesto`, `presupuesto_detalle` | Implementado en Sprint 3 | Base existente; Sprint 5 consume el presupuesto | Verificar integración con autorización |
-| S05-02 | Aprobar u observar presupuesto/cambio | US-012 | RF-015 | CA-010 | RN-006 | POST `/api/v1/siniestros/{id}/autorizaciones` | `autorizacion` | Parcial/modelado | Existe tabla y contrato, pero el SDD no define payload ni reglas detalladas de decisión | Completar contrato funcional mínimo y casos de aceptación sin inventar umbrales |
+| S05-02 | Aprobar u observar presupuesto/cambio | US-012 | RF-015 | CA-010 | RN-006 | POST `/api/v1/siniestros/{id}/autorizaciones` | `autorizacion` | Parcial/modelado | La decisión funcional de aprobación u observación está definida; permanece pendiente la representación contractual y técnica de la observación | Cerrar representación de observación sin inventar payload, persistencia, permisos ni reglas no definidas |
 | S05-03 | Vigencia del presupuesto | US-012 | RF-015 | CA-010 | — | Relacionado con autorización | `presupuesto.vigencia` | Parcial | El modelo contiene `vigencia`, pero el modelo físico declara que no implementa todavía una regla de 7 días | No asumir 7 días en código hasta que exista decisión formal aplicable |
 | S05-04 | Responsable de aprobación | US-012 | RF-015 | CA-010 | RN-006 | POST autorizaciones | `autorizacion.aprobador` | Modelado | Campo existente; identidad/autorización de actor sigue pendiente en MVP | Mantener `aprobador` sin inventar claims/permisos runtime |
 | S05-05 | Seguimiento de reparación | — | RF-005 | CA-005 | — | No definido | No existe entidad específica de reparación | No implementado | El estado `EN_REPARACION` existe, pero no hay historia, RF específico, CA específico ni estructura de datos de seguimiento | **Cerrar brecha SDD y modelo antes de código** |
@@ -56,9 +56,9 @@ Fuente: `02-historias-usuario.md`.
 - Persistencia: `autorizacion`.
 - API: `POST /api/v1/siniestros/{id}/autorizaciones`.
 - Máquina de estados: `PRESUPUESTO_RECIBIDO -> AUTORIZADO` y `PRESUPUESTO_RECIBIDO -> OBSERVADO`.
-- Resultado: **alcance válido de Sprint 5, pero contrato funcional todavía incompleto**.
+- Resultado: **alcance funcional definido; representación contractual/técnica de la observación todavía pendiente**.
 
-No se inventan montos, niveles de aprobación, motivos obligatorios adicionales ni permisos concretos porque permanecen pendientes en la especificación.
+No se inventan montos, niveles de aprobación, motivos obligatorios adicionales, payloads, estructuras persistentes ni permisos concretos porque permanecen pendientes en la especificación.
 
 ## 5. Elementos del Sprint 5 sin historia de usuario equivalente
 

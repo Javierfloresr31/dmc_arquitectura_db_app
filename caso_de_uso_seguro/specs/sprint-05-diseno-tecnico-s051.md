@@ -7,7 +7,7 @@ Cerrar el diseño técnico de la capacidad de autorización sin inventar campos,
 ## 2. Fuentes contractuales
 
 - US-012 — Gestionar autorización.
-- RF-015 — Registrar aprobación de presupuesto/cambio, vigencia y aprobador.
+- RF-015 — Registrar la decisión de aprobación u observación de presupuesto/cambio, su vigencia cuando corresponda y el responsable de la decisión.
 - CA-010 — Presupuesto: vigencia, diagnóstico, aprobación/observación, cambios y responsable.
 - Contrato API: `POST /api/v1/siniestros/{id}/autorizaciones`.
 - Máquina de estados: `PRESUPUESTO_RECIBIDO -> AUTORIZADO` y `PRESUPUESTO_RECIBIDO -> OBSERVADO`.

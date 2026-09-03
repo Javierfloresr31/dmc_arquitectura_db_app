@@ -78,33 +78,37 @@ Esta funcionalidad fue validada mediante E2E en S05.1.
 
 ---
 
-## 4. Brecha funcional S05.2
+## 4. Brecha contractual/técnica S05.2
 
-El SDD contempla que operaciones pueda:
+El alcance funcional ya establece que operaciones puede:
 
 - aprobar un presupuesto;
 - observar un presupuesto cuando requiere corrección;
 - dejar registrada la decisión y su responsable.
 
+RF-015, US-012 y CA-010 son consistentes con este alcance.
+
 La máquina de estados contempla:
 
 `PRESUPUESTO_RECIBIDO → OBSERVADO`
 
-Actualmente `OBSERVADO` no existe como constante en el modelo Java ni existe una operación específica para registrar esta decisión.
+La brecha pendiente no es la definición funcional de la observación, sino su representación contractual y técnica. Actualmente `OBSERVADO` no existe como constante en el modelo Java ni existe una operación específica para registrar esta decisión.
 
 ### Decisión
 
 La observación debe tratarse como una decisión operacional distinta de la aprobación.
 
-La implementación no deberá inventar campos, payloads, permisos ni estructuras persistentes que todavía no estén definidos por el contrato funcional/API.
+La implementación no deberá inventar campos, payloads, permisos ni estructuras persistentes que todavía no estén definidos por el contrato API.
 
-Antes de implementar se debe cerrar la representación definitiva de:
+Antes de implementar se debe confirmar la representación definitiva de:
 
 - decisión de observar;
 - responsable;
-- justificación/motivo;
+- justificación/motivo, si corresponde;
 - fecha;
 - trazabilidad de la transición.
+
+Mientras estos elementos no estén definidos contractualmente, S05.2 permanece en diseño y no se modifica la implementación.
 
 ---
 
