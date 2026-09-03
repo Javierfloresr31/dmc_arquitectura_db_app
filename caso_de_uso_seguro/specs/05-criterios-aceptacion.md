@@ -28,7 +28,7 @@ Dado que existe una alerta, entonces un investigador autorizado puede confirmarl
 Dado que un proveedor no responde, entonces se registra el intento y el caso puede seguir mediante reintento, escalamiento o reasignación.
 
 ## CA-010 Presupuesto
-Dado un presupuesto recibido, entonces se registra su vigencia, diagnóstico, aprobación/observación, cambios y responsable de aprobación.
+Dado un presupuesto recibido, entonces se registra su vigencia, diagnóstico, aprobación/observación, cambios y responsable de la decisión.
 
 ## CA-011 Auditoría
 Dado un expediente, entonces la línea de tiempo permite reconstruir cambios, evidencias, cobertura, proveedores, presupuesto, comunicaciones y pagos.
