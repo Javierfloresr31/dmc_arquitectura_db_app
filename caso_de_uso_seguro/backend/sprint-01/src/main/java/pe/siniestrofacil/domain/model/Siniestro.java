@@ -24,4 +24,5 @@ public record Siniestro(
     public static final String LISTO_PARA_ENTREGA = "LISTO_PARA_ENTREGA";
     public static final String INDEMNIZADO = "INDEMNIZADO";
     public static final String CERRADO = "CERRADO";
+    public static final String OBSERVADO = "OBSERVADO";
 }

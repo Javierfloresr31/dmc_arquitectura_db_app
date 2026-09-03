@@ -108,7 +108,7 @@ Antes de implementar se debe confirmar la representación definitiva de:
 - fecha;
 - trazabilidad de la transición.
 
-La representación contractual mínima de la observación queda definida en el contrato API. El payload definitivo y los permisos asociados permanecen pendientes, por lo que la implementación se limitará al alcance funcional y contractual actualmente definido.
+La decisión funcional de observar queda definida, pero la representación contractual todavía no es suficiente para implementar la operación. El contrato identifica el endpoint de observaciones, pero mantiene pendiente el payload definitivo y los permisos asociados. No se implementará código hasta definir como mínimo la representación del responsable de la decisión.
 
 ---
 
@@ -287,7 +287,7 @@ Cuando un elemento sea necesario pero no esté definido, deberá registrarse com
 
 ## 14. Estado del diseño
 
-**S05.2 — LISTO PARA IMPLEMENTACIÓN**
+**S05.2 — EN DISEÑO**
 
 La autorización se encuentra implementada y validada como parte de S05.1.
 

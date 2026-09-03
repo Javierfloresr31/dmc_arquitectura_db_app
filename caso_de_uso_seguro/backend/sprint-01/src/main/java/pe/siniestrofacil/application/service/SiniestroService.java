@@ -6,6 +6,7 @@ import pe.siniestrofacil.domain.model.Siniestro;
 import pe.siniestrofacil.domain.port.SiniestroRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -13,6 +14,7 @@ import java.util.*;
 
 @Service
 public class SiniestroService {
+
     private final SiniestroRepository repository;
     private final PagoPort pagoPort;
 
@@ -25,10 +27,20 @@ public class SiniestroService {
     }
 
     @Transactional
-    public Siniestro create(CrearSiniestroRequest r, String idempotencyKey, String correlationId) {
+    public Siniestro create(
+            CrearSiniestroRequest r,
+            String idempotencyKey,
+            String correlationId) {
+
         Siniestro draft = new Siniestro(
-                null, null, null, r.fecha(), r.ubicacionAproximada(),
-                r.tipoEvento(), r.danosAparentes(), Siniestro.REPORTADO);
+                null,
+                null,
+                null,
+                r.fecha(),
+                r.ubicacionAproximada(),
+                r.tipoEvento(),
+                r.danosAparentes(),
+                Siniestro.REPORTADO);
 
         String requestHash = fingerprint(r);
 
@@ -52,6 +64,20 @@ public class SiniestroService {
 
     @Transactional
     public void transition(long id, String state) {
+
+        if (Siniestro.OBSERVADO.equals(state)) {
+
+            Siniestro siniestro = repository.findById(id)
+                    .orElseThrow(() ->
+                            new IllegalArgumentException(
+                                    "Siniestro inexistente"));
+
+            if (!Siniestro.PRESUPUESTO_RECIBIDO.equals(siniestro.estado())) {
+                throw new IllegalStateException(
+                        "El siniestro solo puede pasar a OBSERVADO " +
+                        "desde PRESUPUESTO_RECIBIDO");
+            }
+        }
 
         if (Siniestro.CERRADO.equals(state)) {
 
@@ -81,15 +107,25 @@ public class SiniestroService {
 
     private String fingerprint(CrearSiniestroRequest request) {
         try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] bytes = digest.digest(request.toString().getBytes(StandardCharsets.UTF_8));
-            StringBuilder hex = new StringBuilder(bytes.length * 2);
+            MessageDigest digest =
+                    MessageDigest.getInstance("SHA-256");
+
+            byte[] bytes = digest.digest(
+                    request.toString()
+                            .getBytes(StandardCharsets.UTF_8));
+
+            StringBuilder hex =
+                    new StringBuilder(bytes.length * 2);
+
             for (byte b : bytes) {
                 hex.append(String.format("%02x", b));
             }
+
             return hex.toString();
+
         } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException("SHA-256 no disponible", e);
+            throw new IllegalStateException(
+                    "SHA-256 no disponible", e);
         }
     }
 }

@@ -229,6 +229,14 @@ create table siniestro_facil.auditoria (
     fecha_evento timestamp with time zone
 );
 
+create table siniestro_facil.presupuesto_observacion (
+    id bigint generated always as identity primary key,
+    presupuesto_id bigint not null references siniestro_facil.presupuesto(id),
+    responsable text not null,
+    observacion text not null,
+    fecha_evento timestamp with time zone not null
+);
+
 create table siniestro_facil.siniestro_relacion (
     siniestro_id bigint not null references siniestro_facil.siniestro(id),
     siniestro_relacionado_id bigint not null references siniestro_facil.siniestro(id),
