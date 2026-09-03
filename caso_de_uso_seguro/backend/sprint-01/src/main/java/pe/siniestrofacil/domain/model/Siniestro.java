@@ -20,5 +20,8 @@ public record Siniestro(
     public static final String INSPECCION_PROGRAMADA = "INSPECCION_PROGRAMADA";
     public static final String PRESUPUESTO_RECIBIDO = "PRESUPUESTO_RECIBIDO";
     public static final String AUTORIZADO = "AUTORIZADO";
+    public static final String EN_REPARACION = "EN_REPARACION";
+    public static final String LISTO_PARA_ENTREGA = "LISTO_PARA_ENTREGA";
     public static final String INDEMNIZADO = "INDEMNIZADO";
+    public static final String CERRADO = "CERRADO";
 }

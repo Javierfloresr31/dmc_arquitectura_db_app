@@ -1,6 +1,7 @@
 package pe.siniestrofacil.application.service;
 
 import pe.siniestrofacil.application.dto.CrearSiniestroRequest;
+import pe.siniestrofacil.application.port.PagoPort;
 import pe.siniestrofacil.domain.model.Siniestro;
 import pe.siniestrofacil.domain.port.SiniestroRepository;
 import org.springframework.stereotype.Service;
@@ -13,9 +14,14 @@ import java.util.*;
 @Service
 public class SiniestroService {
     private final SiniestroRepository repository;
+    private final PagoPort pagoPort;
 
-    public SiniestroService(SiniestroRepository repository) {
+    public SiniestroService(
+            SiniestroRepository repository,
+            PagoPort pagoPort) {
+
         this.repository = repository;
+        this.pagoPort = pagoPort;
     }
 
     @Transactional
@@ -46,6 +52,30 @@ public class SiniestroService {
 
     @Transactional
     public void transition(long id, String state) {
+
+        if (Siniestro.CERRADO.equals(state)) {
+
+            Siniestro siniestro = repository.findById(id)
+                    .orElseThrow(() ->
+                            new IllegalArgumentException(
+                                    "Siniestro inexistente"));
+
+            boolean estadoValido =
+                    Siniestro.LISTO_PARA_ENTREGA.equals(siniestro.estado()) ||
+                    Siniestro.INDEMNIZADO.equals(siniestro.estado());
+
+            if (!estadoValido) {
+                throw new IllegalStateException(
+                        "El siniestro solo puede cerrarse desde " +
+                        "LISTO_PARA_ENTREGA o INDEMNIZADO");
+            }
+
+            if (pagoPort.listar(id).isEmpty()) {
+                throw new IllegalStateException(
+                        "No existe resultado económico registrado");
+            }
+        }
+
         repository.transition(id, state);
     }
 

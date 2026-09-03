@@ -89,7 +89,7 @@ La reconciliación del piloto queda como validación interna del expediente. No 
 
 La implementación del pago valida que exista una autorización correspondiente al mismo siniestro antes de registrar la operación económica. Asimismo, verifica que no exista una operación económica equivalente y reutiliza la infraestructura de idempotencia existente.
 
-La validación automatizada del backend finaliza correctamente con **22 pruebas ejecutadas, 0 fallos y 0 errores (`BUILD SUCCESS`)**.
+La validación automatizada del backend finaliza correctamente con **26 pruebas ejecutadas, 0 fallos y 0 errores (`BUILD SUCCESS`)**.
 
 **Estado:** Cerrado para el piloto.
 
@@ -107,6 +107,14 @@ Se mantienen únicamente las transiciones ya definidas:
 - `LISTO_PARA_ENTREGA -> CERRADO`.
 
 No se agrega una regla de reapertura ni nuevas transiciones.
+
+**Evidencia técnica de cierre:**
+
+La implementación permite cerrar el expediente únicamente desde `LISTO_PARA_ENTREGA` o `INDEMNIZADO` y exige que exista un resultado económico registrado para el siniestro. La transición a `CERRADO` reutiliza la persistencia existente del siniestro, historial de estados y auditoría.
+
+La validación automatizada del backend finaliza correctamente con **26 pruebas ejecutadas, 0 fallos y 0 errores (`BUILD SUCCESS`)**.
+
+**Estado:** Cerrado para el piloto.
 
 ### B5-07 — Autorización y API
 
