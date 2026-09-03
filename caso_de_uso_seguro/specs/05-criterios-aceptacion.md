@@ -47,3 +47,7 @@ Dado que una IA emite una recomendación, entonces se almacena como recomendaci�
 
 ## CA-014 Control de pagos duplicados
 Dado un siniestro y una autorización, cuando ya existe una operación económica equivalente, entonces un nuevo pago debe tratarse como conflicto y no generar un segundo resultado económico.
+
+### CA-015 — Cierre del expediente
+
+Dado un siniestro que haya completado la modalidad de resolución correspondiente, cuando se solicite el cierre, entonces debe permitirse el cierre desde `LISTO_PARA_ENTREGA` o `INDEMNIZADO`, debe existir el resultado económico registrado y la transición debe quedar registrada en el historial.
