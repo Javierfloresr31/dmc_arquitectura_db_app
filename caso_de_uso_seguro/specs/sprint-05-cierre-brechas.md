@@ -85,6 +85,14 @@ Si posteriormente se requiere controlar fechas, avances, responsables, órdenes 
 
 La reconciliación del piloto queda como validación interna del expediente. No se agrega una nueva entidad ni una integración externa en Sprint 5. Las conciliaciones externas se mantienen para Sprint 6 si se confirma su necesidad.
 
+**Evidencia técnica de cierre:**
+
+La implementación del pago valida que exista una autorización correspondiente al mismo siniestro antes de registrar la operación económica. Asimismo, verifica que no exista una operación económica equivalente y reutiliza la infraestructura de idempotencia existente.
+
+La validación automatizada del backend finaliza correctamente con **22 pruebas ejecutadas, 0 fallos y 0 errores (`BUILD SUCCESS`)**.
+
+**Estado:** Cerrado para el piloto.
+
 ### B5-06 — Cierre
 
 **Respuesta simulada de negocio:**

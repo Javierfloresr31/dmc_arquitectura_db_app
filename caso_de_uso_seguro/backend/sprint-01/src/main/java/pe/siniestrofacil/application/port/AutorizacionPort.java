@@ -16,6 +16,10 @@ public interface AutorizacionPort {
             String idempotencyKey,
             String requestHash);
 
+    Optional<Autorizacion> buscarPorIdYPorSiniestro(
+            Long autorizacionId,
+            Long siniestroId);
+
     List<Autorizacion> listar(Long siniestroId);
 
     record Autorizacion(

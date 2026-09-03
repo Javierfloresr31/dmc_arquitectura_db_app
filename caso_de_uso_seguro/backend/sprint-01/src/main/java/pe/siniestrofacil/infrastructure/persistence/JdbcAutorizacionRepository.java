@@ -185,6 +185,31 @@ public Optional<Resultado> buscarPorIdempotencyKey(
 }
 
     @Override
+    public Optional<Autorizacion> buscarPorIdYPorSiniestro(
+            Long autorizacionId,
+            Long siniestroId) {
+
+        return jdbc.query(
+                """
+                select id,
+                       siniestro_id,
+                       aprobador
+                  from siniestro_facil.autorizacion
+                 where id = ?
+                   and siniestro_id = ?
+                """,
+                (rs, rowNum) ->
+                        new Autorizacion(
+                                rs.getLong("id"),
+                                rs.getLong("siniestro_id"),
+                                rs.getString("aprobador")),
+                autorizacionId,
+                siniestroId)
+                .stream()
+                .findFirst();
+    }
+
+    @Override
     public List<Autorizacion> listar(
             Long siniestroId) {
 
