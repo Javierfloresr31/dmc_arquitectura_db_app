@@ -23,7 +23,7 @@ La persistencia indicada es `autorizacion`, `pago` e historial/auditoría.
 |---|---|---|---|---|---|---|---|---|---|---|
 | S05-01 | Recibir presupuesto | US-011 | RF-014 | CA-010 | — | POST `/api/v1/siniestros/{id}/presupuestos` | `presupuesto`, `presupuesto_detalle` | Implementado en Sprint 3 | Base existente; Sprint 5 consume el presupuesto | Verificar integración con autorización |
 | S05-02 | Aprobar u observar presupuesto/cambio | US-012 | RF-015 | CA-010 | RN-006 | POST `/api/v1/siniestros/{id}/autorizaciones` | `autorizacion` | Parcial/modelado | La decisión funcional de aprobación u observación está definida; permanece pendiente la representación contractual y técnica de la observación | Cerrar representación de observación sin inventar payload, persistencia, permisos ni reglas no definidas |
-| S05-03 | Vigencia del presupuesto | US-012 | RF-015 | CA-010 | — | Relacionado con autorización | `presupuesto.vigencia` | Parcial | El modelo contiene `vigencia`, pero el modelo físico declara que no implementa todavía una regla de 7 días | No asumir 7 días en código hasta que exista decisión formal aplicable |
+| S05-03 | Vigencia del presupuesto | US-012 | RF-015 | CA-010 | — | Relacionado con autorización | `presupuesto.vigencia` | Implementado en Sprint 3 | El servicio existente calcula y registra una vigencia de 7 días calendario | Validar mediante pruebas y conservar la implementación existente |
 | S05-04 | Responsable de aprobación | US-012 | RF-015 | CA-010 | RN-006 | POST autorizaciones | `autorizacion.aprobador` | Modelado | Campo existente; identidad/autorización de actor sigue pendiente en MVP | Mantener `aprobador` sin inventar claims/permisos runtime |
 | S05-05 | Seguimiento de reparación | — | RF-005 | CA-005 | — | No definido | No existe entidad específica de reparación | No implementado | El estado `EN_REPARACION` existe, pero no hay historia, RF específico, CA específico ni estructura de datos de seguimiento | **Cerrar brecha SDD y modelo antes de código** |
 | S05-06 | Pago/indemnización | — | RF-018 | — | RN-005 | POST `/api/v1/siniestros/{id}/pagos` | `pago` | Parcial/modelado | Existe RF de riesgo de pagos duplicados, API y tabla, pero no existe historia de usuario ni CA específico para pago/indemnización | **Cerrar brecha funcional con US + CA antes de implementación** |
@@ -105,7 +105,7 @@ La máquina de estados define las transiciones finales, pero mantiene abiertas l
 | Reconciliación sin US/RF/CA | Requerimiento funcional | Alta | Definir alcance o reclasificar como pendiente de Sprint 5 |
 | Cierre sin CA específico | Criterio de aceptación | Media | Completar CA y condiciones de cierre |
 | Payload/permisos de autorización y pago pendientes | Contrato API | Media | No bloquear diseño de dominio; no inventar contrato definitivo |
-| Regla de vigencia de 7 días no materializada | Regla/modelo | Media | No implementar hasta decisión formal |
+| Regla de vigencia de 7 días implementada | Regla/modelo | Media | Validar mediante pruebas y conservar la implementación existente |
 
 ## 8. Decisiones de ejecución
 

@@ -17,7 +17,7 @@ La fuente base mantiene el alcance de Sprint 5 en autorización, seguimiento de 
 | B5-05 | Reconciliación aparece en el plan, pero no tiene US/RF/CA/API/modelo suficiente | Requerimiento funcional | Definir alcance o reclasificar |
 | B5-06 | Cierre tiene transiciones conceptuales, pero condiciones exactas incompletas | Criterios de aceptación | Definir condiciones |
 | B5-07 | Payloads y permisos definitivos de autorización/pago pendientes | Contrato API | Mantener pendiente; no inventar |
-| B5-08 | Vigencia de presupuesto de 7 días no está formalmente materializada en el modelo vigente | Regla/modelo | No implementar hasta decisión formal |
+| B5-08 | Vigencia de presupuesto de 7 días | Regla/modelo | Implementada; validar mediante pruebas |
 
 ## 3. Decisiones que NO se deben inventar
 
@@ -114,7 +114,7 @@ Se mantiene `autorizacion.aprobador`. Los payloads definitivos, permisos y claim
 
 **Decisión:**
 
-No se implementa automáticamente una vigencia de siete días. El modelo físico vigente contiene `presupuesto.vigencia`, pero la propia especificación física declara que la regla de siete días no está implementada. La fecha registrada será utilizada como dato disponible hasta que exista una regla formal que determine su semántica.
+La vigencia del presupuesto se establece en siete días calendario. La implementación existente calcula `LocalDate.now().plusDays(7)`, valida la fecha recibida cuando corresponde y registra la vigencia calculada.
 
 ## 5. Reclasificación propuesta
 
@@ -127,7 +127,7 @@ No se implementa automáticamente una vigencia de siete días. El modelo físico
 | Reconciliación | Brecha US/RF/CA/API/modelo | Regla operativa interna del piloto; sin integración externa |
 | Cierre | Brecha CA | CA asociado a las dos transiciones existentes |
 | Payload/permisos API | Pendiente | Se mantiene pendiente técnico; no bloquea dominio |
-| Vigencia 7 días | Regla no materializada | Se mantiene OPEN; no se codifica |
+| Vigencia 7 días | Regla implementada | Validar mediante pruebas y conservar la implementación existente |
 
 ## 6. Resultado
 
