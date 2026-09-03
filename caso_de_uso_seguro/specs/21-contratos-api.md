@@ -110,7 +110,9 @@ Consulta presupuestos.
 
 ### POST `/api/v1/presupuestos/{id}/observaciones`
 
-Registra observaciones.
+Registra la decisión de observar un presupuesto cuando requiere corrección, manteniendo la trazabilidad del responsable y la fecha de la decisión.
+
+El payload definitivo y los permisos asociados permanecen pendientes de definición contractual.
 
 ### POST `/api/v1/presupuestos/{id}/ampliaciones`
 

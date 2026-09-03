@@ -108,7 +108,7 @@ Antes de implementar se debe confirmar la representación definitiva de:
 - fecha;
 - trazabilidad de la transición.
 
-Mientras estos elementos no estén definidos contractualmente, S05.2 permanece en diseño y no se modifica la implementación.
+La representación contractual mínima de la observación queda definida en el contrato API. El payload definitivo y los permisos asociados permanecen pendientes, por lo que la implementación se limitará al alcance funcional y contractual actualmente definido.
 
 ---
 
@@ -287,7 +287,7 @@ Cuando un elemento sea necesario pero no esté definido, deberá registrarse com
 
 ## 14. Estado del diseño
 
-**S05.2 — EN DISEÑO**
+**S05.2 — LISTO PARA IMPLEMENTACIÓN**
 
 La autorización se encuentra implementada y validada como parte de S05.1.
 
