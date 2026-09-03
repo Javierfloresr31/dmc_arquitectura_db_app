@@ -1,0 +1,1 @@
+package pe.siniestrofacil.application.dto; import java.util.List; public record ApiError(String code,String message,String correlationId,List<String> details){}
