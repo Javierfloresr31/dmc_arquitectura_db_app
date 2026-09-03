@@ -11,3 +11,5 @@
 - RN-009 Una alerta debe conservar la información necesaria para reproducir por qué fue generada.
 - RN-010 Reasignaciones conservan historial y razón.
 - RN-011 Proveedores pueden ser reintentados, escalados o sustituidos si no responden.
+
+- RN-012 Antes de registrar un pago debe verificarse que no exista una operación económica equivalente para el mismo siniestro y autorización. Si existe una coincidencia, la operación debe tratarse como conflicto y no generar un segundo pago.

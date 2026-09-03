@@ -44,3 +44,6 @@ Dado un expediente, entonces la línea de tiempo permite reconstruir cambios, ev
 
 ## CA-012 IA
 Dado que una IA emite una recomendación, entonces se almacena como recomendación/alerta revisable y no como decisión definitiva.
+
+## CA-014 Control de pagos duplicados
+Dado un siniestro y una autorización, cuando ya existe una operación económica equivalente, entonces un nuevo pago debe tratarse como conflicto y no generar un segundo resultado económico.
