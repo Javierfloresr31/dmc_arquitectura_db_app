@@ -24,7 +24,7 @@ La persistencia indicada es `autorizacion`, `pago` e historial/auditoría.
 | S05-01 | Recibir presupuesto | US-011 | RF-014 | CA-010 | — | POST `/api/v1/siniestros/{id}/presupuestos` | `presupuesto`, `presupuesto_detalle` | Implementado en Sprint 3 | Base existente; Sprint 5 consume el presupuesto | Verificar integración con autorización |
 | S05-02 | Aprobar u observar presupuesto/cambio | US-012 | RF-015 | CA-010 | RN-006 | POST `/api/v1/siniestros/{id}/autorizaciones` / POST `/api/v1/presupuestos/{id}/observaciones` | `autorizacion`, `presupuesto_observacion` | Implementado y validado | Observación implementada con responsable, observación, fecha, transición e idempotencia | Mantener contrato mínimo y evidencia de pruebas |
 | S05-03 | Vigencia del presupuesto | US-012 | RF-015 | CA-010 | — | Relacionado con autorización | `presupuesto.vigencia` | Implementado en Sprint 3 | El servicio existente calcula y registra una vigencia de 7 días calendario | Validar mediante pruebas y conservar la implementación existente |
-| S05-04 | Responsable de aprobación | US-012 | RF-015 | CA-010 | RN-006 | POST autorizaciones | `autorizacion.aprobador` | Modelado | Campo existente; identidad/autorización de actor sigue pendiente en MVP | Mantener `aprobador` sin inventar claims/permisos runtime |
+| S05-04 | Responsable de aprobación | US-012 | RF-015 | CA-010 | RN-006 | POST autorizaciones | `autorizacion.aprobador` | Modelado | Campo existente; identidad del actor para el piloto se resuelve mediante Google OIDC y el `sub` del ID Token | Mantener `aprobador` asociado al actor autenticado; Firebase definitivo queda para la implementación posterior |
 | S05-05 | Seguimiento de reparación | — | RF-005 | CA-005 | — | Transiciones de estado | `siniestro`, `siniestro_estado_historial` | Cerrado para piloto | La necesidad de seguimiento se cubre mediante los estados `AUTORIZADO → EN_REPARACION → LISTO_PARA_ENTREGA`; no se requiere una entidad independiente de reparación | No agregar entidad ni atributos de reparación; mantener las transiciones existentes |
 | S05-06 | Pago/indemnización | US-019 | RF-018 | CA-013 | RN-005 | POST `/api/v1/siniestros/{id}/pagos` | `pago` | Implementado y probado | El pago/indemnización queda asociado a un siniestro autorizado, con trazabilidad del resultado y controles de idempotencia y duplicidad | Mantener la implementación existente y validar integración posterior |
 | S05-07 | Control de pagos duplicados | US-019 | RF-018 | CA-014 | RN-012 | POST `/api/v1/siniestros/{id}/pagos` | `pago` + idempotencia técnica | Implementado y probado | Si ya existe una operación económica equivalente para el mismo siniestro y autorización, un nuevo pago debe tratarse como conflicto y no generar un segundo resultado económico | Mantener el control existente; no agregar restricciones físicas no definidas |
@@ -115,6 +115,18 @@ La máquina de estados define las transiciones finales, pero mantiene abiertas l
 4. La idempotencia técnica existente se reutilizará; el comportamiento funcional específico del pago deberá probarse cuando se cierre el criterio de duplicidad.
 5. La máquina de estados vigente sigue siendo la fuente para las transiciones ya formalizadas.
 6. Las preguntas abiertas del SDD permanecen abiertas hasta que una fuente las resuelva.
+
+## 8.1 Actualización posterior — Sprint 6
+
+Sprint 6 cerró para el piloto las brechas de contrato y autorización identificadas durante Sprint 5.
+
+- El payload mínimo de autorización quedó definido como `{}` y la identidad del actor no se recibe como dato confiable desde el cliente.
+- El payload mínimo de pago quedó definido mediante `autorizacionId`.
+- Los permisos por endpoint quedaron definidos mediante RBAC para el piloto.
+- La identidad del actor del piloto se resuelve mediante Google OIDC y el `sub` del ID Token.
+- La adopción definitiva de Firebase Authentication, Custom Claims y la administración de roles permanece pendiente para la implementación definitiva.
+
+Las brechas registradas en las secciones históricas de Sprint 5 se conservan como evidencia del estado de la especificación en ese momento. Su resolución posterior para el piloto queda trazada mediante Sprint 6.
 
 ## 9. Resultado de la revisión
 

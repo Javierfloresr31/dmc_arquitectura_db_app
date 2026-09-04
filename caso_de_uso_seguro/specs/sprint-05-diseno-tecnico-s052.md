@@ -343,10 +343,16 @@ Resultado:
 - actor `operador01`
 - `correlation_id = corr-s05-12-obs-54`
 
+### Actualización posterior — Sprint 6
+
+Sprint 6 cerró para el piloto las brechas de permisos y autorización asociadas a las operaciones de autorización y pago. La identidad del actor para el piloto se resuelve mediante Google OIDC y el `sub` del ID Token.
+
+La adopción definitiva de Firebase Authentication, Custom Claims y la administración de roles permanece como decisión de la implementación definitiva.
+
 ### Estado final
 
 **S05.2 — CERRADO.**
 
 La funcionalidad de observación de presupuesto y la trazabilidad enriquecida de las operaciones Sprint 5 quedan implementadas y validadas para el alcance definido.
 
-Los permisos y claims Firebase definitivos permanecen pendientes del contrato de seguridad/autorización.
+Los permisos de autorización del piloto quedaron cerrados en Sprint 6. Los Custom Claims y la administración definitiva de roles mediante Firebase permanecen pendientes para la implementación definitiva.

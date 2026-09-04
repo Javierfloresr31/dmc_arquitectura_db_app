@@ -129,6 +129,12 @@ Se autoriza únicamente la corrección/alineación de la interfaz HTTP con el co
 
 La capacidad de pago no se inicia hasta validar el cierre de S05.1.
 
+## 8.1 Actualización posterior — Sprint 6
+
+Sprint 6 cerró para el piloto las brechas de payload y permisos de autorización mediante el contrato API y la matriz RBAC vigente. La identidad del actor para el piloto se resuelve mediante Google OIDC y el `sub` del ID Token.
+
+La adopción definitiva de Firebase Authentication, Custom Claims y la administración de roles permanece como decisión de la implementación definitiva y no modifica el cierre histórico de S05.1.
+
 ## 9. Estado
 
 **S05.1 — DISEÑO TÉCNICO CERRADO CON BRECHAS EXPLÍCITAS.**
