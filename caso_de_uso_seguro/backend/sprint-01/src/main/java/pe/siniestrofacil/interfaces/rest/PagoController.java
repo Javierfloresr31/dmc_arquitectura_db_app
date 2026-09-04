@@ -5,18 +5,22 @@ import org.springframework.web.bind.annotation.*;
 import pe.siniestrofacil.application.dto.PagoRequest;
 import pe.siniestrofacil.application.dto.PagoResponse;
 import pe.siniestrofacil.application.service.PagoService;
+import pe.siniestrofacil.application.security.AuthorizationService;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/v1")
 public class PagoController {
 
     private final PagoService service;
+    private final AuthorizationService authorizationService;
 
-    public PagoController(PagoService service) {
+    public PagoController(PagoService service, AuthorizationService authorizationService) {
         this.service = service;
+        this.authorizationService = authorizationService;
     }
 
     @PostMapping("/siniestros/{id}/pagos")
@@ -27,6 +31,7 @@ public class PagoController {
             String idempotencyKey,
             @RequestHeader(value = "X-Correlation-Id", required = false)
             String correlationId) {
+        authorizationService.requireRole(Set.of("OPERADOR", "SUPERVISOR"));
 
         if (correlationId == null || correlationId.isBlank()) {
             correlationId = UUID.randomUUID().toString();

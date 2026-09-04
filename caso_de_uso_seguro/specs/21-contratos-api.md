@@ -9,13 +9,13 @@ Contrato inicial del backend derivado de las operaciones descritas en las entrev
 - API Gateway: punto de entrada de las APIs.
 - Backend: Cloud Run.
 - Base path propuesta: `/api/v1`.
-- Autenticación: Firebase Authentication.
-- Identidad de aplicación: Firebase ID Token.
+- Autenticación del piloto: Google OIDC mediante ID Token.
+- Identidad del piloto: `sub` del Google OIDC ID Token. La implementación definitiva utilizará Firebase Authentication.
 
 ## 3. Convenciones
 
 Headers técnicos:
-- `Authorization: Bearer <Firebase ID Token>`.
+- `Authorization: Bearer <Google OIDC ID Token>`.
 - `X-Correlation-Id`: correlación extremo a extremo.
 - `Idempotency-Key`: operaciones mutables que admitan repetición segura.
 
@@ -155,7 +155,7 @@ X-Correlation-Id: corr-s052-001
 
 `siniestro_facil.presupuesto_observacion`
 
-Los permisos y claims Firebase definitivos permanecen pendientes del contrato de seguridad/autorización.
+Los permisos por endpoint y las respuestas de seguridad del piloto están definidos en el Sprint 6. La implementación definitiva utilizará Firebase Authentication y Custom Claims.
 
 
 ### POST `/api/v1/presupuestos/{id}/ampliaciones`
@@ -199,6 +199,25 @@ Las operaciones sensibles generan trazabilidad. La descarga de evidencia y consu
 - `502/503`: dependencia externa no disponible.
 - `500`: error interno no controlado.
 
+
 ## 14. Pendientes que no se inventan
 
-Quedan por concretar antes de generar OpenAPI definitivo: esquema exacto de payloads, paginación, filtros, formato de errores estándar, permisos por endpoint, claims definitivos de Firebase y contratos de terceros.
+Quedan fuera del cierre de Sprint 6 los siguientes elementos:
+
+- paginación;
+- filtros avanzados;
+- formato de errores estándar definitivo;
+- contratos de terceros;
+- generación del OpenAPI definitivo.
+
+Los siguientes elementos quedan cerrados para el piloto:
+
+- autenticación mediante Google OIDC;
+- identidad mediante `sub` del ID Token;
+- permisos por endpoint;
+- payload mínimo de autorización;
+- payload mínimo de pago;
+- comportamiento HTTP `401`, `403`, `404`, `409` y `422`;
+- uso de `Idempotency-Key` en operaciones que requieren idempotencia.
+
+La implementación definitiva podrá sustituir Google OIDC por Firebase Authentication sin modificar los contratos funcionales definidos en este documento.

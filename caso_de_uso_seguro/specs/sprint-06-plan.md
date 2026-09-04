@@ -2,7 +2,7 @@
 
 ## 1. Estado
 
-PLANIFICADO
+CERRADO - PILOTO
 
 ## 2. Objetivo
 
@@ -12,9 +12,9 @@ funcionalidades de negocio ni integraciones externas no contratadas.
 
 ## 3. Alcance
 
-### S06-01 — Roles Firebase
+### S06-01 — Roles del piloto
 
-Definir los roles mínimos que podrán utilizarse mediante Firebase Custom
+Definir los roles mínimos de autorización del piloto, compatibles con el modelo definitivo de Firebase Custom
 Claims para la autorización funcional del backend.
 
 Roles considerados:
@@ -99,11 +99,13 @@ Validar como mínimo:
 
 ### S06-06 — Alcance del recurso
 
-Validar que el acceso a un siniestro respete las reglas de pertenencia y
-alcance definidas para cada rol.
+El alcance sobre el siniestro debe validarse además del rol del usuario.
 
-No se permitirá utilizar un rol válido como sustituto del control de
-pertenencia al expediente.
+En el piloto no existe todavía una relación persistente entre la identidad Google OIDC (`sub`) y una persona o participante del dominio que permita implementar esta validación de pertenencia sin introducir una nueva estructura de datos.
+
+Por esta razón, el piloto no agrega una relación identidad-persona ni modifica el modelo persistente. El control de pertenencia o asignación queda establecido como requisito para la implementación definitiva con Firebase y el modelo de identidad correspondiente.
+
+Un rol válido no constituye por sí mismo autorización irrestricta sobre todos los expedientes.
 
 ### S06-07 — Contrato API
 
@@ -113,9 +115,9 @@ y comportamiento de seguridad.
 El objetivo es dejar preparada la especificación para generar un contrato
 OpenAPI definitivo.
 
-## 4.1 Decisión S06-01 — Roles Firebase
+## 4.1 Decisión S06-01 — Roles del piloto
 
-Los roles Firebase del piloto serán los ocho actores ya definidos en la especificación de seguridad:
+Los roles del piloto serán los ocho actores ya definidos en la especificación de seguridad:
 
 - `ASEGURADO`
 - `REPORTANTE_AUTORIZADO`
@@ -136,11 +138,11 @@ El Custom Claim mínimo de autorización utilizará el atributo `role`. Ejemplo:
 
 Los Custom Claims no almacenarán datos personales, información de negocio, información del siniestro ni atributos que deban cambiar frecuentemente.
 
-La identidad del usuario se determinará mediante el Firebase UID del contexto autenticado. El `role` se utilizará para autorización funcional, pero no sustituirá las reglas de pertenencia o alcance sobre el siniestro.
+Para el piloto, la identidad del usuario se determinará mediante el `sub` del Google OIDC ID Token en el contexto autenticado. El `role` se utilizará para autorización funcional, pero no sustituirá las reglas de pertenencia o alcance sobre el siniestro. La implementación definitiva utilizará Firebase UID y Custom Claims.
 
 ## 4.2 Decisión S06-02 — Permisos por endpoint
 
-La autorización de los endpoints existentes se determinará mediante la combinación de identidad autenticada, rol Firebase, permiso sobre la operación y alcance sobre el recurso.
+La autorización de los endpoints existentes se determinará mediante la combinación de identidad autenticada, rol configurado para el piloto, permiso sobre la operación y alcance sobre el recurso. La implementación definitiva utilizará Firebase.
 
 | Endpoint | Roles permitidos | Alcance mínimo |
 |---|---|---|
@@ -170,9 +172,9 @@ La autorización de los endpoints existentes se determinará mediante la combina
 
 Todos los endpoints protegidos deberán validar, en este orden:
 
-1. Firebase ID Token válido.
-2. Identidad mediante Firebase UID.
-3. Rol Firebase.
+1. Google OIDC ID Token válido para el piloto.
+2. Identidad mediante el `sub` del Google OIDC ID Token.
+3. Rol configurado para el entorno piloto.
 4. Permiso sobre la operación.
 5. Pertenencia o alcance sobre el recurso.
 
@@ -253,13 +255,13 @@ No forman parte de este sprint:
 
 Sprint 6 podrá cerrarse cuando:
 
-1. Los roles Firebase estén definidos.
+1. Los roles del piloto estén definidos.
 2. Los permisos por endpoint estén documentados.
 3. Los payloads mínimos de autorización y pago estén definidos.
 4. Existan pruebas de `401` y `403`.
-5. Se valide el alcance del recurso.
+5. El alcance del recurso quede definido y documentada la limitación del piloto para su validación identidad-persona.
 6. El contrato API esté actualizado.
-7. Las pruebas automatizadas existentes continúen exitosas.
+7. Las pruebas automatizadas existentes continúen exitosas y la validación E2E con Cloud Run quede identificada como pendiente de despliegue.
 8. No existan cambios pendientes de especificación necesarios para el alcance del piloto.
 
 ## 6. Pendientes fuera del sprint
