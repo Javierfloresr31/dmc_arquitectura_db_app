@@ -196,3 +196,23 @@ Antes de implementar código debe actualizarse la trazabilidad principal para in
 - vigencia contractual del presupuesto;
 - integración financiera externa, si posteriormente se incorpora;
 - reglas de reapertura del expediente.
+
+## Estado final Sprint 5
+
+**Sprint 5 — CERRADO PARA EL PILOTO**
+
+Todas las funcionalidades comprometidas para el alcance piloto se
+encuentran implementadas, probadas o cerradas mediante una decisión
+funcional explícita.
+
+Las funcionalidades S05-01 a S05-12 cuentan con trazabilidad hacia
+historias de usuario, requerimientos funcionales, criterios de
+aceptación, reglas de negocio, API y persistencia según corresponda.
+
+### Pendientes no bloqueantes
+
+- permisos definitivos por endpoint;
+- claims Firebase definitivos.
+
+Estas pendientes corresponden al endurecimiento de seguridad y no
+bloquean el cierre funcional del Sprint 5 para el piloto.
