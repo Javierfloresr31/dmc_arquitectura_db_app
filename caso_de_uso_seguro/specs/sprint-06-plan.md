@@ -55,16 +55,37 @@ un identificador enviado por el cliente como fuente de confianza.
 
 ### S06-04 — Contrato de pago/indemnización
 
-Cerrar el payload mínimo de:
+Endpoint:
 
 POST `/api/v1/siniestros/{id}/pagos`
 
-Mantener los controles existentes:
+Request mínimo:
 
-- autorización aplicable;
-- idempotencia;
-- prevención de operación económica equivalente;
-- trazabilidad.
+```json
+{
+  "autorizacionId": 21
+}
+```
+
+El campo `autorizacionId` identifica la autorización aplicable al pago y debe corresponder al mismo siniestro indicado en la URL. No se recibe desde el cliente información del actor que ejecuta la operación; la identidad se obtiene del contexto autenticado.
+
+Headers requeridos:
+
+- `Authorization: Bearer <Google OIDC ID Token>`
+- `Idempotency-Key`
+- `X-Correlation-Id` opcional.
+
+Controles mínimos:
+
+- debe existir una autorización aplicable al siniestro;
+- no debe existir una operación económica equivalente para el mismo siniestro y autorización;
+- una misma `Idempotency-Key` no debe generar un segundo resultado económico;
+- la operación debe quedar registrada en auditoría;
+- ante una respuesta desconocida de un proveedor externo no se realizará un reintento ciego.
+
+Respuesta exitosa: `200` con el resultado del pago registrado.
+
+No se define en este sprint un proveedor financiero externo ni nuevos campos económicos no presentes en la implementación existente.
 
 ### S06-05 — Respuestas de seguridad
 
