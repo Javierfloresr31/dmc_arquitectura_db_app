@@ -5,6 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pe.siniestrofacil.application.dto.AutorizacionRequest;
 import pe.siniestrofacil.application.dto.AutorizacionResponse;
+import pe.siniestrofacil.application.security.AuthenticationContext;
+import pe.siniestrofacil.application.security.AuthorizationService;
 import pe.siniestrofacil.application.service.AutorizacionService;
 
 import java.util.List;
@@ -15,11 +17,17 @@ import java.util.UUID;
 public class AutorizacionController {
 
     private final AutorizacionService service;
+    private final AuthenticationContext authenticationContext;
+    private final AuthorizationService authorizationService;
 
     public AutorizacionController(
-            AutorizacionService service) {
+            AutorizacionService service,
+            AuthenticationContext authenticationContext,
+            AuthorizationService authorizationService) {
 
         this.service = service;
+        this.authenticationContext = authenticationContext;
+        this.authorizationService = authorizationService;
     }
 
     @PostMapping("/siniestros/{id}/autorizaciones")
@@ -33,6 +41,8 @@ public class AutorizacionController {
                     value = "X-Correlation-Id",
                     required = false) String correlationId) {
 
+        authorizationService.requireAuthorizationRole();
+
         String cid =
                 correlationId == null || correlationId.isBlank()
                         ? UUID.randomUUID().toString()
@@ -42,7 +52,7 @@ public class AutorizacionController {
                 AutorizacionResponse.from(
                         service.registrar(
                                 id,
-                                request.aprobador(),
+                                authenticationContext.get().uid(),
                                 idempotencyKey,
                                 cid)));
     }

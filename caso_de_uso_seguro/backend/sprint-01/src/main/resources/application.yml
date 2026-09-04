@@ -13,5 +13,9 @@ spring:
     locations: classpath:db/migration
     baseline-on-migrate: true
     baseline-version: 0
+security:
+  google:
+    audience: ${CLOUD_RUN_AUDIENCE:}
+    default-role: ${CLOUD_RUN_DEFAULT_ROLE:OPERADOR}
 server:
   port: ${PORT:8080}

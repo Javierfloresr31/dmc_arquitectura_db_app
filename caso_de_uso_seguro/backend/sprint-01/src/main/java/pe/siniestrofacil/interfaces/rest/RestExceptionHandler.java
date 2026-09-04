@@ -39,6 +39,16 @@ public class RestExceptionHandler {
                         List.of()));
     }
 
+    @ExceptionHandler(SecurityException.class)
+    ResponseEntity<ApiError> forbidden(SecurityException e) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(new ApiError(
+                        "FORBIDDEN",
+                        e.getMessage(),
+                        UUID.randomUUID().toString(),
+                        List.of()));
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
     ResponseEntity<ApiError> business(IllegalArgumentException e) {
         return ResponseEntity.unprocessableEntity()
