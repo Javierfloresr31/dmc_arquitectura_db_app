@@ -86,7 +86,10 @@ class PagoServiceTest {
 
         verify(siniestroRepository).transition(
                 109L,
-                Siniestro.INDEMNIZADO);
+                Siniestro.INDEMNIZADO,
+                "PAGO_REGISTRADO",
+                null,
+                "CORR-001");
     }
 
     @Test

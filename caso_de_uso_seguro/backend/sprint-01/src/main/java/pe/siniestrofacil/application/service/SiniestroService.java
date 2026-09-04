@@ -64,6 +64,29 @@ public class SiniestroService {
 
     @Transactional
     public void transition(long id, String state) {
+        validarTransicion(id, state);
+        repository.transition(id, state);
+    }
+
+    @Transactional
+    public void transition(
+            long id,
+            String state,
+            String evento,
+            String actor,
+            String correlationId) {
+
+        validarTransicion(id, state);
+
+        repository.transition(
+                id,
+                state,
+                evento,
+                actor,
+                correlationId);
+    }
+
+    private void validarTransicion(long id, String state) {
 
         if (Siniestro.OBSERVADO.equals(state)) {
 
@@ -101,8 +124,6 @@ public class SiniestroService {
                         "No existe resultado económico registrado");
             }
         }
-
-        repository.transition(id, state);
     }
 
     private String fingerprint(CrearSiniestroRequest request) {

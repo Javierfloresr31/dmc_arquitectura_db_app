@@ -109,7 +109,10 @@ public class PresupuestoObservacionService {
 
             siniestroService.transition(
                     siniestroId,
-                    Siniestro.OBSERVADO);
+                    Siniestro.OBSERVADO,
+                    "PRESUPUESTO_OBSERVADO",
+                    responsable,
+                    correlationId);
         }
 
         return resultado.observacion();

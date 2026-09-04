@@ -95,7 +95,10 @@ public class AutorizacionService {
 
             siniestroRepository.transition(
                     siniestroId,
-                    Siniestro.AUTORIZADO);
+                    Siniestro.AUTORIZADO,
+                    "AUTORIZACION_REGISTRADA",
+                    aprobador,
+                    correlationId);
         }
 
         return resultado.autorizacion();

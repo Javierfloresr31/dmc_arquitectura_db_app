@@ -120,11 +120,44 @@ La validación automatizada del backend finaliza correctamente con **26 pruebas 
 
 **Respuesta simulada de negocio:**
 
-> La autorización debe registrar la decisión y al responsable. Los detalles definitivos del contrato técnico se pueden completar durante el diseño de API sin cambiar la regla de negocio.
+> La autorización debe registrar la decisión y al responsable. Para la observación de presupuesto se define un payload mínimo con responsable y observación.
 
 **Decisión:**
 
-Se mantiene `autorizacion.aprobador`. Los payloads definitivos, permisos y claims permanecen como pendientes técnicos del contrato API. No se inventan valores.
+Se mantiene `autorizacion.aprobador`.
+
+Para S05.2 se define y valida el endpoint:
+
+`POST /api/v1/presupuestos/{id}/observaciones`
+
+Payload mínimo:
+
+```json
+{
+  "responsable": "operador01",
+  "observacion": "Corregir mano de obra del presupuesto"
+}
+```
+
+La decisión se persiste en `siniestro_facil.presupuesto_observacion` y produce la transición:
+
+`PRESUPUESTO_RECIBIDO -> OBSERVADO`
+
+La operación soporta `Idempotency-Key`.
+
+La integración de auditoría enriquecida registra evento, actor y `correlation_id` cuando están disponibles.
+
+**Evidencia de validación:**
+
+- Observación: `presupuesto_id = 6`, `siniestro_id = 54`.
+- Resultado: `HTTP 200`, observación `id = 3`, estado `OBSERVADO`.
+- Auditoría: `PRESUPUESTO_OBSERVADO`, actor `operador01`, `correlation_id = corr-s05-12-obs-54`.
+- Autorización: `siniestro_id = 37`, `autorizacion_id = 31`, evento `AUTORIZACION_REGISTRADA`, actor `aprobador01`, `correlation_id = corr-s05-12-auth-37`.
+- Pago: `siniestro_id = 37`, `pago_id = 21`, evento `PAGO_REGISTRADO`, `correlation_id = corr-s05-12-pago-37`.
+- Pruebas automatizadas: `32` ejecutadas, `0` fallos y `0` errores.
+
+Los permisos y claims Firebase definitivos permanecen pendientes del contrato de seguridad/autorización y no bloquean el cierre funcional de S05.2.
+
 
 ### B5-08 — Vigencia
 

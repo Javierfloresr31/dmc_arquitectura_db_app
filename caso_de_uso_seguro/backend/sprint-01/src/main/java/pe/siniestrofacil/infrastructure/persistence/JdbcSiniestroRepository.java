@@ -141,15 +141,56 @@ public class JdbcSiniestroRepository implements SiniestroRepository {
         if (count == null || count == 0) {
             throw new IllegalArgumentException("Siniestro inexistente");
         }
-        jdbc.update("update siniestro_facil.siniestro set estado=? where id=?", state, id);
+
+        jdbc.update(
+                "update siniestro_facil.siniestro set estado=? where id=?",
+                state, id);
+
         jdbc.update(
                 "insert into siniestro_facil.siniestro_estado_historial " +
                 "(siniestro_id,estado,fecha_evento) values(?,?,current_timestamp)",
                 id, state);
+
         jdbc.update(
                 "insert into siniestro_facil.auditoria(entidad,entidad_id,fecha_evento) " +
                 "values(?,?,current_timestamp)",
                 "SINIESTRO", id);
+    }
+
+    @Override
+    public void transition(
+            long id,
+            String state,
+            String evento,
+            String actor,
+            String correlationId) {
+
+        Integer count = jdbc.queryForObject(
+                "select count(*) from siniestro_facil.siniestro where id=?",
+                Integer.class, id);
+
+        if (count == null || count == 0) {
+            throw new IllegalArgumentException("Siniestro inexistente");
+        }
+
+        jdbc.update(
+                "update siniestro_facil.siniestro set estado=? where id=?",
+                state, id);
+
+        jdbc.update(
+                "insert into siniestro_facil.siniestro_estado_historial " +
+                "(siniestro_id,estado,fecha_evento) values(?,?,current_timestamp)",
+                id, state);
+
+        jdbc.update(
+                "insert into siniestro_facil.auditoria " +
+                "(entidad,entidad_id,evento,actor,fecha_evento,correlation_id) " +
+                "values(?,?,?,?,current_timestamp,?)",
+                "SINIESTRO",
+                id,
+                evento,
+                actor,
+                correlationId);
     }
 
     private record IdempotencyRecord(String requestHash, Long siniestroId) {}

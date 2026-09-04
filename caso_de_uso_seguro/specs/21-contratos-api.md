@@ -112,7 +112,51 @@ Consulta presupuestos.
 
 Registra la decisión de observar un presupuesto cuando requiere corrección, manteniendo la trazabilidad del responsable y la fecha de la decisión.
 
-El payload definitivo y los permisos asociados permanecen pendientes de definición contractual.
+**Request mínimo:**
+
+```json
+{
+  "responsable": "operador01",
+  "observacion": "Corregir mano de obra del presupuesto"
+}
+```
+
+**Headers opcionales:**
+
+```text
+Idempotency-Key: obs-s052-001
+X-Correlation-Id: corr-s052-001
+```
+
+**Resultado funcional:**
+
+`PRESUPUESTO_RECIBIDO -> OBSERVADO`
+
+**Respuesta exitosa:**
+
+```json
+{
+  "id": 1,
+  "presupuestoId": 2,
+  "siniestroId": 8,
+  "estado": "OBSERVADO",
+  "responsable": "operador01",
+  "observacion": "Corregir mano de obra del presupuesto",
+  "fechaEvento": "..."
+}
+```
+
+**Idempotencia:**
+
+- Misma `Idempotency-Key` y mismo payload: devuelve el resultado existente.
+- Misma `Idempotency-Key` con payload diferente: `409 IDEMPOTENCY_CONFLICT`.
+
+**Persistencia:**
+
+`siniestro_facil.presupuesto_observacion`
+
+Los permisos y claims Firebase definitivos permanecen pendientes del contrato de seguridad/autorización.
+
 
 ### POST `/api/v1/presupuestos/{id}/ampliaciones`
 

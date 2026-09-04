@@ -88,7 +88,10 @@ public class PagoService {
         if (resultado.nuevo()) {
             siniestroRepository.transition(
                     siniestroId,
-                    Siniestro.INDEMNIZADO);
+                    Siniestro.INDEMNIZADO,
+                    "PAGO_REGISTRADO",
+                    null,
+                    correlationId);
         }
 
         return resultado.pago();

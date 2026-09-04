@@ -17,4 +17,11 @@ public interface SiniestroRepository {
     Optional<Siniestro> findById(long id);
     List<Siniestro> findAll();
     void transition(long id, String estado);
+
+    void transition(
+            long id,
+            String estado,
+            String evento,
+            String actor,
+            String correlationId);
 }

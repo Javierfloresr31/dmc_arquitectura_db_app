@@ -119,7 +119,10 @@ class PresupuestoObservacionServiceTest {
 
         verify(siniestroService).transition(
                 siniestroId,
-                Siniestro.OBSERVADO);
+                Siniestro.OBSERVADO,
+                "PRESUPUESTO_OBSERVADO",
+                "operador01",
+                "corr-001");
     }
 
     @Test

@@ -22,4 +22,23 @@ public class JdbcAuditoriaRepository implements AuditoriaPort {
                 entidad,
                 entidadId);
     }
+
+    @Override
+    public void registrar(
+            String entidad,
+            Long entidadId,
+            String evento,
+            String actor,
+            String correlationId) {
+
+        jdbc.update(
+                "insert into siniestro_facil.auditoria " +
+                "(entidad, entidad_id, evento, actor, fecha_evento, correlation_id) " +
+                "values (?, ?, ?, ?, current_timestamp, ?)",
+                entidad,
+                entidadId,
+                evento,
+                actor,
+                correlationId);
+    }
 }

@@ -226,7 +226,10 @@ create table siniestro_facil.auditoria (
     id bigint generated always as identity primary key,
     entidad text,
     entidad_id bigint,
-    fecha_evento timestamp with time zone
+    evento text,
+    actor text,
+    fecha_evento timestamp with time zone,
+    correlation_id text
 );
 
 create table siniestro_facil.presupuesto_observacion (

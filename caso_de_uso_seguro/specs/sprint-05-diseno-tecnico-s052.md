@@ -287,24 +287,66 @@ Cuando un elemento sea necesario pero no esté definido, deberá registrarse com
 
 ## 14. Estado del diseño
 
-**S05.2 — EN DISEÑO**
+**S05.2 — IMPLEMENTADO Y VALIDADO**
 
-La autorización se encuentra implementada y validada como parte de S05.1.
+La observación del presupuesto cuenta con:
 
-La observación del presupuesto y la protección de la máquina de estados requieren cierre técnico antes de modificar la implementación.
+- payload mínimo definido;
+- persistencia específica;
+- responsable y observación;
+- transición `PRESUPUESTO_RECIBIDO -> OBSERVADO`;
+- idempotencia;
+- validación automatizada;
+- validación HTTP contra Cloud SQL;
+- evidencia directa de persistencia en PostgreSQL.
+
+La integración de auditoría enriquecida de Sprint 5 cuenta con evidencia E2E para autorización, pago y observación.
+
+La protección completa de la máquina de estados continúa como brecha técnica independiente y no forma parte del cierre específico de esta observación.
 
 ---
 
-## 15. Próximo paso
+## 15. Evidencia de cierre
 
-Antes de implementar:
+### Pruebas automatizadas
 
-1. revisar el contrato API de autorización;
-2. determinar la representación definitiva de aprobación/observación;
-3. revisar persistencia disponible;
-4. definir pruebas unitarias;
-5. implementar únicamente el alcance aprobado;
-6. ejecutar `mvn clean test`;
-7. ejecutar E2E contra Cloud SQL;
-8. actualizar matriz de trazabilidad y cierre de brechas;
-9. cerrar S05.2 con evidencia y commit.
+`mvn test`
+
+Resultado:
+
+- 32 pruebas;
+- 0 fallos;
+- 0 errores;
+- `BUILD SUCCESS`.
+
+### Validación E2E — autorización
+
+- `siniestro_id = 37`
+- `autorizacion_id = 31`
+- `AUTORIZACION_REGISTRADA`
+- actor `aprobador01`
+- `correlation_id = corr-s05-12-auth-37`
+
+### Validación E2E — pago
+
+- `siniestro_id = 37`
+- `pago_id = 21`
+- `PAGO_REGISTRADO`
+- `correlation_id = corr-s05-12-pago-37`
+
+### Validación E2E — observación
+
+- `siniestro_id = 54`
+- `presupuesto_id = 6`
+- `observacion_id = 3`
+- `PRESUPUESTO_OBSERVADO`
+- actor `operador01`
+- `correlation_id = corr-s05-12-obs-54`
+
+### Estado final
+
+**S05.2 — CERRADO.**
+
+La funcionalidad de observación de presupuesto y la trazabilidad enriquecida de las operaciones Sprint 5 quedan implementadas y validadas para el alcance definido.
+
+Los permisos y claims Firebase definitivos permanecen pendientes del contrato de seguridad/autorización.
