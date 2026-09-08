@@ -36,17 +36,17 @@ El desarrollo parte de:
 
 ### 3.1 Alcance de autenticación del MVP
 
-Por decisión explícita del proyecto, **el MVP omite temporalmente la autenticación con Firebase** para concentrar el desarrollo en la funcionalidad de negocio.
+El piloto utiliza autenticación mediante **Google OIDC ID Token** y control de invocación mediante **Cloud Run IAM**.
 
-Esto no elimina la seguridad como requisito de arquitectura futura. Firebase Authentication, RBAC y claims permanecen documentados como capacidad posterior y no forman parte de los criterios de cierre funcional del MVP.
+El backend obtiene la identidad desde el claim `sub` del token validado y aplica autorización funcional mediante roles/RBAC. El cliente no proporciona una identidad confiable para determinar el actor de la operación.
 
-Durante el MVP:
-- los endpoints funcionales se podrán ejecutar sin Firebase ID Token;
-- no se implementarán Custom Claims;
-- no se bloquearán los casos de uso por autenticación Firebase;
-- la lógica de negocio no debe quedar acoplada a Firebase;
-- se mantendrán `correlationId`, auditoría funcional e idempotencia cuando correspondan;
-- el diseño debe permitir incorporar Firebase posteriormente sin reescribir los casos de uso.
+Durante el piloto:
+- los endpoints protegidos requieren un token OIDC válido;
+- Cloud Run controla la invocación mediante IAM;
+- el backend valida la identidad y aplica RBAC;
+- se mantienen `correlationId`, auditoría funcional e idempotencia cuando corresponden.
+
+**Evolución futura:** Firebase Authentication y Custom Claims podrán sustituir el mecanismo de identidad del piloto sin modificar los contratos funcionales de los casos de uso.
 
 ## 4. Sprint 0 — Contrato técnico y preparación
 
@@ -186,41 +186,48 @@ Persistencia:
 - `pago`;
 - historial/auditoría.
 
-## 10. Sprint 6 — Integraciones, resiliencia y observabilidad
+## 10. Sprint 6 — Seguridad RBAC y contratos API
 
-**Objetivo:** endurecer el backend para operación integrada.
-
-Alcance:
-- sistema de pólizas;
-- asistencia/grúa;
-- talleres;
-- mapas;
-- mensajería;
-- medios de pago;
-- timeout;
-- retry con backoff/jitter;
-- circuit breaker/fallback cuando corresponda;
-- correlación;
-- observabilidad;
-- métricas de consumo y costo.
-
-## 11. Sprint 7 — End-to-End, seguridad y piloto
-
-**Objetivo:** validar el flujo completo y preparar el piloto.
+**Objetivo:** cerrar los controles de seguridad y contratos mínimos requeridos para el piloto.
 
 Alcance:
-- E2E;
-- contratos;
-- seguridad;
-- resiliencia;
-- criterios de aceptación;
-- rendimiento;
-- revisión de costos GCP;
-- corrección de defectos;
-- documentación operativa;
-- preparación del piloto.
+- autenticación mediante Google OIDC ID Token;
+- identidad basada en claim `sub`;
+- control de invocación mediante Cloud Run IAM;
+- autorización funcional mediante RBAC;
+- permisos mínimos por endpoint;
+- contratos mínimos de autorización y pago;
+- respuestas HTTP de seguridad y validación funcional;
+- idempotencia para operaciones críticas;
+- trazabilidad mediante `correlationId` y auditoría.
 
-En este sprint se incorporará la autenticación Firebase si se confirma su entrada en el alcance de salida del MVP/piloto.
+**Firebase Authentication y Custom Claims:** quedan como evolución futura y no forman parte del mecanismo de identidad del piloto.
+
+## 11. Sprint 7 — End-to-End y preparación del piloto
+
+**Objetivo:** validar el flujo completo desplegado y obtener evidencia técnica para el piloto.
+
+Validaciones realizadas:
+- autenticación OIDC contra Cloud Run;
+- autorización mediante Cloud Run IAM;
+- RBAC con rol `OPERADOR`;
+- flujo de pago sobre datos persistidos;
+- idempotencia mediante `Idempotency-Key`;
+- persistencia del pago en Cloud SQL;
+- ausencia de duplicación ante reintento;
+- registro de idempotencia y `correlationId`.
+
+Evidencia E2E:
+- siniestro `6`;
+- presupuesto `1`;
+- autorización `26`;
+- pago `22`;
+- segunda solicitud idempotente devuelve nuevamente pago `22`;
+- Cloud SQL registra un único pago para el siniestro `6`.
+
+**Estado:** técnicamente validado para piloto.
+
+Las decisiones de negocio o integraciones externas que permanezcan pendientes no se consideran bloqueantes para esta validación técnica.
 
 ## 12. Definition of Done por sprint
 

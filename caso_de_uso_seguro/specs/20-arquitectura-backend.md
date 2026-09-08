@@ -8,7 +8,7 @@ Definir la arquitectura técnica del backend de Siniestro Fácil sobre Google Cl
 
 | Capacidad | Plataforma |
 |---|---|
-| Identidad | Firebase Authentication |
+| Identidad | Google OIDC + Cloud Run IAM |
 | API | Google Cloud API Gateway |
 | Backend | Google Cloud Run |
 | Persistencia | Cloud SQL for PostgreSQL |
@@ -31,9 +31,9 @@ Infraestructura de datos existente:
 Canales / Frontend
         |
         v
-Firebase Authentication
+Google OIDC
         |
-        | Firebase ID Token
+        | Google OIDC ID Token
         v
 Google Cloud API Gateway
         |
@@ -66,8 +66,8 @@ PostgreSQL   +-- Talleres
 
 ## 4. Responsabilidades
 
-### Firebase Authentication
-Autentica al usuario y proporciona el Firebase ID Token. La identidad obtenida del token no será sustituida por un identificador enviado de confianza desde el cliente.
+### Google OIDC
+Valida la identidad mediante Google OIDC y proporciona el Google OIDC ID Token. La identidad obtenida del claim `sub` no será sustituida por un identificador enviado de confianza desde el cliente.
 
 ### API Gateway
 Punto de entrada de las APIs públicas y aplicación de la configuración de API/OpenAPI definida para el backend.
@@ -120,7 +120,7 @@ PostgreSQL utiliza el esquema `siniestro_facil`. El modelo físico existente es 
 
 ## 8. Seguridad
 
-Firebase Authentication resuelve autenticación. La autorización funcional permanece en el backend mediante roles/claims y reglas de acceso. Custom Claims se limitarán a información necesaria para control de acceso; no almacenarán perfiles ni datos de negocio extensos.
+Google OIDC resuelve la autenticación del piloto y Cloud Run IAM controla la invocación del servicio. La autorización funcional permanece en el backend mediante RBAC y reglas de acceso. Firebase Authentication y Custom Claims quedan como evolución futura.
 
 ## 9. FinOps
 
@@ -149,7 +149,6 @@ Quedan como decisiones de refinamiento:
 - mecanismo de mensajería/eventos;
 - contratos reales de terceros;
 - permisos definitivos por endpoint;
-- responsable de administración de roles Firebase;
 - campos sensibles definitivos y operaciones que requieren step-up;
 - política final de clases/lifecycle de Cloud Storage basada en medición del piloto.
 

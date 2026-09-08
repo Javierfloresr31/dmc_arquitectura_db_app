@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17-jre
+FROM gcr.io/distroless/java17-debian12
 WORKDIR /app
 COPY target/siniestro-facil-backend-0.1.0-SNAPSHOT.jar app.jar
 EXPOSE 8080
