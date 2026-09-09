@@ -71,9 +71,9 @@ No se fija todavía una transición exacta por días porque la frecuencia real d
 
 Cloud Storage permite Object Lifecycle Management para cambiar de clase o eliminar objetos cuando cumplen condiciones; las reglas de lifecycle no eliminan un objeto antes de satisfacer una política de retención.
 
-## 5. Firebase / RBAC — mejores prácticas adoptadas
+## 5. Firebase / RBAC — arquitectura definitiva
 
-- Firebase Authentication es la fuente de identidad.
+- Para la arquitectura definitiva, Firebase Authentication será la fuente de identidad.
 - Firebase UID identifica al usuario autenticado.
 - Custom Claims se utilizarán **solo para información de autorización**, principalmente roles/perfiles; no para almacenar datos de negocio o perfiles extensos.
 - Los datos de perfil y negocio se mantendrán fuera de Custom Claims.

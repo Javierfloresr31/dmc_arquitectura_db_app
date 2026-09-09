@@ -4,26 +4,24 @@
 
 Las entrevistas establecen acceso restringido por rol y necesidad, especialmente para información de fraude y evidencia. Las descargas de evidencia y consultas sensibles deben quedar registradas.
 
-## 2. Identidad — decisión cerrada
+## 2. Identidad — decisión del piloto
 
-Se utilizará **Firebase Authentication** como mecanismo de autenticación del sistema.
+El piloto utiliza **Google OIDC** como mecanismo de autenticación y **Cloud Run IAM** como control de invocación del servicio.
 
 Flujo:
 
 ```text
 Cliente
   ↓
-Firebase Authentication
+Google OIDC ID Token
   ↓
-Firebase ID Token
-  ↓
-API Gateway
+Cloud Run IAM
   ↓
 Cloud Run
   ↓
 Validación de identidad
   ↓
-Firebase UID + claims
+Google OIDC `sub`
   ↓
 Autorización funcional RBAC
 ```
@@ -66,9 +64,9 @@ Los permisos marcados como `según delegación`, `según necesidad` o `autorizad
 - Acciones sensibles generan auditoría.
 - La autorización de pago no debe depender únicamente de una recomendación de IA.
 
-## 6. Claims Firebase
+## 6. Identidad y roles
 
-Firebase Custom Claims se utilizarán únicamente para control de acceso, principalmente roles/perfiles mínimos. No se utilizarán para almacenar datos de perfil extensos, información de negocio ni atributos que deban cambiar frecuentemente.
+En el piloto no se utilizan Firebase Custom Claims. La identidad se obtiene del claim `sub` del Google OIDC ID Token y el backend aplica el rol configurado para el piloto. Para la implementación definitiva podrá utilizarse Firebase Custom Claims para roles/perfiles mínimos.
 
 El backend debe tratar los claims como entrada de autorización y aplicar además reglas de pertenencia/alcance del recurso. Tener un rol válido no implica acceso irrestricto a cualquier siniestro.
 
