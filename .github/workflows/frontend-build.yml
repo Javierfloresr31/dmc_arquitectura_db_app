@@ -1,0 +1,32 @@
+name: Frontend build
+
+on:
+  push:
+    branches: [main, "feat/siniestro-facil-frontend"]
+    paths:
+      - "frontend-siniestro-facil/**"
+      - ".github/workflows/frontend-build.yml"
+  pull_request:
+    paths:
+      - "frontend-siniestro-facil/**"
+      - ".github/workflows/frontend-build.yml"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend-siniestro-facil
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: frontend-siniestro-facil/package.json
+      - name: Install dependencies
+        run: npm install
+      - name: Build
+        run: npm run build
