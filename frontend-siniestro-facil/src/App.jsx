@@ -67,12 +67,12 @@ export default function App() {
     setNotice('');
     setError('');
     const claim = {
-      vehiculo: `${form.vehiculo.trim()} · ${form.placa.trim().toUpperCase()}`,
-      fecha: form.fecha,
-      tipo: form.tipo,
-      descripcion: form.descripcion.trim(),
-      estado: 'Reportado',
-      progreso: 1
+      poliza: { numero: form.poliza.trim() },
+      vehiculo: { placa: form.placa.trim().toUpperCase() },
+      fecha: new Date(`${form.fecha}T12:00:00`).toISOString(),
+      ubicacionAproximada: form.ubicacionAproximada.trim(),
+      tipoEvento: form.tipo,
+      danosAparentes: form.descripcion.trim()
     };
     if (isDemo) {
       setClaims([{ id: `SF-DEMO-${String(Date.now()).slice(-6)}`, fecha: form.fecha, vehiculo: form.placa.trim().toUpperCase(), tipo: form.tipo, estado: 'Reportado', progreso: 1 }, ...claims]);
@@ -91,7 +91,7 @@ export default function App() {
       setNotice('El reporte fue enviado al backend.');
       await loadClaims();
       setShowForm(false);
-      setForm({ vehiculo: '', placa: '', fecha: '', tipo: 'Choque leve', descripcion: '' });
+      setForm({ poliza: '', placa: '', fecha: '', ubicacionAproximada: '', tipo: 'Choque leve', descripcion: '' });
     } catch (e) {
       setError(`No se pudo registrar el reporte: ${e.message}. Verifica el contrato de la API.`);
     }
