@@ -1,42 +1,38 @@
-# Siniestro Fácil — Frontend
+# Siniestro Fácil — Frontend + BFF
 
-Frontend React + Vite en español. Incluye panel de siniestros, búsqueda y formulario de registro.
+Frontend React + Vite servido por Node.js en Cloud Run. El mismo origen atiende la interfaz y expone un proxy acotado para el backend privado.
 
-## Requisitos
-- Node.js 20+
-- npm
-- Docker (opcional, para despliegue)
-
-## Ejecutar localmente
+## Ejecutar localmente en modo demo
 ```bash
-cd frontend-siniestro-facil
 npm install
 cp .env.example .env
 npm run dev
 ```
-Abrir la URL indicada por Vite (por defecto http://localhost:5173).
+Con `VITE_DEMO_MODE=true`, se muestran datos ficticios y no se envían peticiones al backend.
 
-## Modo demostración
-Si `VITE_API_BASE_URL` está vacío, se muestran datos ficticios y el formulario crea registros únicamente en memoria. No se transmiten datos al backend.
+## Integración con el backend
+El contrato utilizado se basa en `SiniestroController` y `CrearSiniestroRequest`:
+- `GET /api/v1/siniestros`
+- `POST /api/v1/siniestros`
+- `GET /api/v1/siniestros/{id}`
+- `POST /api/v1/siniestros/{id}/transiciones?estado=...`
 
-## Integración backend
-Configurar `VITE_API_BASE_URL` con la URL base del servicio. El adaptador actual espera provisionalmente:
-- `GET /api/siniestros` → array de siniestros o objeto `{ items: [] }`.
-- `POST /api/siniestros` → acepta JSON con vehículo, placa, fecha, tipo, descripción y estado.
+El formulario envía `poliza.numero`, `vehiculo.placa`, `fecha`, `ubicacionAproximada`, `tipoEvento` y `danosAparentes`. El servidor `server.mjs` sirve los archivos estáticos y reenvía solo los endpoints permitidos al backend usando un ID token de Google obtenido con la identidad de servicio de Cloud Run. No se colocan credenciales en el navegador.
 
-**Importante:** confirmar rutas, autenticación, nombres de campos, respuestas y política CORS con el backend existente antes de habilitar la integración real. Vite incorpora las variables `VITE_*` durante la compilación; no guardar secretos en ellas.
+## Seguridad para pruebas
+Mantener privado el backend. Usar una cuenta de servicio dedicada al frontend+BFF y concederle solo `roles/run.invoker` sobre el backend. Proteger el frontend+BFF con Identity-Aware Proxy (IAP), autorizando únicamente a los usuarios/grupos de prueba. No permitir acceso anónimo al BFF. Firebase queda fuera de esta etapa.
 
-## Build y validación
+## Build
 ```bash
 npm run build
+npm start
 ```
+`npm start` sirve `dist` en el puerto 8080. En Cloud Run, configurar `BACKEND_URL` como variable de entorno de ejecución; no usar una variable `VITE_*` para esa URL.
 
 ## Docker
 ```bash
 docker build -t siniestro-facil-frontend .
-docker run --rm -p 8080:8080 siniestro-facil-frontend
+docker run --rm -p 8080:8080 -e BACKEND_URL=https://URL-DEL-BACKEND siniestro-facil-frontend
 ```
-Abrir http://localhost:8080. La URL del backend debe configurarse durante el build mediante `--build-arg VITE_API_BASE_URL=https://URL-DEL-BACKEND`.
 
-## GCP Cloud Run
-Ver `../docs-frontend/03_gcp_pruebas.md` para los comandos de despliegue.
+Consultar `../docs-frontend/03_gcp_pruebas.md` antes del despliegue. El código debe compilarse y la infraestructura verificarse antes de declarar la integración operativa.
